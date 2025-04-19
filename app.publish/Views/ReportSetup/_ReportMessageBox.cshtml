@@ -1,0 +1,59 @@
+﻿<table style="width: 100%;">
+    <tr>
+        <td style="width: 100%;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;">
+                        @Html.DevExpress().Label(settings =>
+                                  {
+                                      settings.Name = "lblMessageToReport";
+                                      settings.PreRender = (sender, e) =>
+                                      {
+                                          ASPxLabel lb = (ASPxLabel)sender;
+                                          lb.ClientInstanceName = "lblMessageToReport";
+                                          settings.ClientVisible = false;
+                                      };
+                                  }).GetHtml()
+                    </td>
+                </tr>
+            </table>
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;height: 40px"></td>
+                </tr>
+            </table>
+            <table style="width: 100%;">
+                <tr>
+                    <td style="float: right;">
+
+                        @Html.DevExpress().Button(settings =>
+                             {
+                                 settings.Name = "btnYesChangeReport";
+                                 settings.Text = "Yes";
+                                 settings.UseSubmitBehavior = false;
+                                 settings.ClientVisible = false;
+                                 settings.ClientSideEvents.Click = "function(s, e) { ChangeReport(); }";
+                             }).GetHtml()
+                         @Html.DevExpress().Button(settings =>
+                             {
+                                 settings.Name = "btnYesCloseReport";
+                                 settings.Text = "Yes";
+                                 settings.UseSubmitBehavior = false;
+                                 settings.ClientVisible = false;
+                                 settings.ClientSideEvents.Click = "function(s, e) {CloseReport(); }";
+                             }).GetHtml()
+                        @Html.DevExpress().Button(settings =>
+                              {
+                                  settings.Name = "btnCancelMessageReport";
+                                  settings.Text = "Cancel";
+                                  settings.UseSubmitBehavior = false;
+                                  settings.ClientVisible = false;
+                                  settings.ClientSideEvents.Click = "function(s, e) { MessageBoxReport.Hide(); }";
+                              }).GetHtml()
+
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,28 @@
+﻿@using CommonDLL.DTO
+@{
+    ViewBag.Title = "ReportDocument";
+    Layout = "~/Views/Shared/_mainLayout.cshtml";
+}
+
+<div class="divTop">
+    ReportDocument Setup
+</div>
+
+@Html.Action("ReportDocumentTopViewPartial", "ReportDocumentSetup")
+@using (Html.BeginForm())
+{
+    @Html.Action("ReportDocumentGridViewPartial", "ReportDocumentSetup")
+}
+
+
+ 
+
+
+ 
+
+
+ 
+
+
+ 
+

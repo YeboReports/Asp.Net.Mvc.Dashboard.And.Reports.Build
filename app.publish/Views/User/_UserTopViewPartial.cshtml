@@ -1,0 +1,51 @@
+﻿<script type="text/javascript">
+
+    function ShowUserRolePopup(_Id)
+    {
+
+         $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheUserEdited", "User")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                       UserRoleAddEditPopup.Show();
+                       UserRoleGridView.PerformCallback();
+                }
+            });
+
+    }
+
+
+    function ShowUserIPPopup(_Id)
+    {
+
+         $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheUserEdited", "User")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                       UserIPAddEditPopup.Show();
+                       UserIPGridView.PerformCallback();
+                }
+            });
+
+    }
+    
+
+    function ReloadUserGrid() {
+        if (UserGridView) {
+            UserGridView.PerformCallback();
+        }
+    }
+
+</script>

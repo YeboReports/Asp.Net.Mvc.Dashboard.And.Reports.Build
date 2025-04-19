@@ -1,0 +1,19 @@
+﻿@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "MenuCallbackPanel";
+    settings.CallbackRouteValues = new
+    {
+        Controller = "Menu",
+        Action = "MenuPartialCallBackPanel"
+    };
+
+    settings.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+    settings.Height = 650;
+
+    settings.SetContent(() =>
+    {
+
+        Html.RenderAction("MenuListPartial", "Menu");
+
+    });
+}).GetHtml()

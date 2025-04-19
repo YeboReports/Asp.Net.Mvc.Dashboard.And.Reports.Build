@@ -1,0 +1,34 @@
+﻿@using CommonDLL.DTO
+@{
+    ViewBag.Title = "Report";
+    Layout = "~/Views/Shared/_mainLayout.cshtml";
+}
+
+<div class="divTop">
+   Reports
+</div>
+
+@Html.Action("ReportTopViewPartial", "Report")
+@using (Html.BeginForm())
+{
+    @Html.Action("ReportGridViewPartial", "Report")
+}
+
+@Html.DevExpress().PopupControl(settings =>
+{
+
+    settings.Name = "MessageBoxReport";
+    settings.Style.Add("Color", "Gray");
+    settings.Style.Add("border-color", "Gray");
+    settings.Style.Add("border-width", "2px");
+    settings.AllowDragging = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.Height = Unit.Percentage(100);
+    settings.Width = Unit.Pixel(350);
+    settings.PopupAnimationType = AnimationType.None;
+    settings.Modal = true;
+    settings.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+    settings.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+    settings.SetContent(() => Html.RenderPartial("_ReportMessageBox", null));
+}).GetHtml()
+ 

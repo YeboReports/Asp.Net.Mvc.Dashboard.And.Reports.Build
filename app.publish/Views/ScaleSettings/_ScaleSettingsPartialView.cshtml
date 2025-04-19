@@ -1,0 +1,38 @@
+﻿     @{ 
+         HttpCookie aCookie = Request.Cookies["ReportSiteScale"];
+         var userSettings = string.Empty;
+         if (aCookie != null)
+         {
+              userSettings = aCookie.Value.ToString();
+
+         }
+
+
+     }
+@Html.DevExpress().ComboBox(settings =>
+{
+    settings.Name = "Percentage";
+
+    settings.Properties.ValueType = typeof(string);
+    settings.Properties.Items.Add("110%");
+    settings.Properties.Items.Add("105%");
+    settings.Properties.Items.Add("100%");
+    settings.Properties.Items.Add("97%");
+    settings.Properties.Items.Add("94%");
+    settings.Properties.Items.Add("90%");
+    settings.Properties.Items.Add("87%");
+    settings.Properties.Items.Add("82%");
+    settings.Properties.Items.Add("80%");
+
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "function(s,e){ ScallingChanged(s,e); }";
+}).Bind(userSettings).GetHtml()
+
+<script type="text/javascript">
+
+    function ScallingChanged(s, e) {
+        setCookie("ReportSiteScale", s.GetText(), 7);
+        location.reload();
+    }
+
+
+</script>

@@ -1,0 +1,25 @@
+﻿@using CommonDLL.DTO;
+@using CommonDLL.Helper;
+@using System.Drawing;
+@using BusinessLogic.Logic;
+@using Reports.Controllers.Cache
+@model  ReportParameterDTO
+@using Reports.Helpers;
+
+@Html.DevExpress().ComboBox(settings =>
+{
+    settings.Name = "ReportParameterGenericLookupList";
+    settings.Properties.DropDownStyle = DropDownStyle.DropDownList;
+    settings.CallbackRouteValues = new { Controller = "ReportSetup", Action = "ReportParameterGenericLookupList" };
+   // settings.Properties.ClientSideEvents.BeginCallback = "OnReportParameterDateLookupReportBeginCallback";
+  //  settings.Properties.ClientSideEvents.Init = "OnComboBoxInit";
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+    settings.Properties.AllowUserInput = true;
+    settings.Properties.AllowMouseWheel = true;
+    settings.Width = Unit.Percentage(99);
+    settings.Properties.TextField = "Name";
+    settings.Properties.ValueField = "Id";
+    settings.Properties.ValueType = typeof(string);
+    settings.Properties.EnableCallbackMode = true;
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "function(s, e) { ReportParameterGenericLookupListChanged(s,e); }";
+}).BindList(Model.ReportParameterDropDownList).Bind(Model.DefaultValue).GetHtml()

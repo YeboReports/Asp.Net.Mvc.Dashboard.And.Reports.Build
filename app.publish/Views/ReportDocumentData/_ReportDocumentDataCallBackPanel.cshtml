@@ -1,0 +1,27 @@
+﻿@model CommonDLL.DTO.ReportDocumentDataCallbackPanelDTO
+@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "ReportDocumentDataPanel";
+    settings.CallbackRouteValues = new
+    {
+        Controller = "ReportDocumentData",
+        Action = "ReportDocumentDataCallbackPanel",
+        RecordId = ViewBag.RecordId,
+        ReportDocumentId = ViewBag.ReportDocumentId
+    };
+    settings.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+    settings.Height = 650;
+    settings.SetContent(() =>
+    {
+        if (ViewBag.RecordId > 0)
+        {
+
+            Html.RenderAction("ReportDocumentDataDocumentViewPartial", "ReportDocumentData", new { RecordId = ViewBag.RecordId, ReportDocumentId = ViewBag.ReportDocumentId });
+
+        }
+        else
+        {
+            ViewContext.Writer.Write("<div>Waiting for content to load...</div>");
+        }
+    });
+}).GetHtml()

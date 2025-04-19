@@ -1,0 +1,30 @@
+﻿<div class="divTop">
+    Dashboard Setup
+</div>
+
+
+@Html.Action("DashboardSetupPartial", "DashboardSetup")
+
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.HeaderText = "Dashboard Roles";
+    settings.Styles.Header.Font.Size = 10;
+    settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.OnWindowInnerWidth;
+    settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+    settings.Style.Add("font-size", "7pt");
+    settings.Name = "DashboardRoleAddEditPopup";
+    settings.Style.Add("Color", "Gray");
+    settings.Style.Add("border-color", "Gray");
+    settings.Style.Add("border-width", "2px");
+    settings.AllowDragging = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.Height = Unit.Percentage(100);
+    settings.Width = Unit.Pixel(600);
+    settings.PopupAnimationType = AnimationType.None;
+    settings.Modal = true;
+    settings.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+    settings.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+    settings.ClientSideEvents.CloseButtonClick = "function(s, e) { ReloadDashboardGrid(); }";
+    settings.SetContent(() => Html.RenderPartial("_DashboardRoleViewPartialPopup", null));
+}).GetHtml()

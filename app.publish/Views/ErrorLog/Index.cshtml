@@ -1,0 +1,29 @@
+﻿<div class="divTop">
+    Error Log
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.Action("ErrorLogGridPartialView", "ErrorLog")
+}
+
+<script type="text/javascript">
+           function DeleteAll()
+    {
+
+         $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeleteAll", "ErrorLog")',
+                data:
+                {
+                },
+                success: function (response)
+                {
+
+ 
+                    ErrorLogGridView.PerformCallback();
+                }
+            });
+
+    }
+</script>

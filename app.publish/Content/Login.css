@@ -1,0 +1,32 @@
+﻿
+html,
+body {
+    height: 100%;
+    padding:0px;
+    margin:0px;
+}
+
+
+body 
+{
+    font-family: sans-serif;
+    
+    }
+
+.centre {
+    display: flex; /* establish flex container */
+    justify-content: center; /* center flex items horizontally, in this case */
+    align-items: center; /* center flex items vertically, in this case */
+    height: 95%;
+    padding: 5px;
+}
+
+.login-btn {
+min-width: 200px;
+
+}
+ 
+
+ 
+ 
+ 

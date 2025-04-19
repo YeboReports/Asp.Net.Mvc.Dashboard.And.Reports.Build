@@ -1,0 +1,131 @@
+﻿@using System.Drawing
+@using BusinessLogic.Logic;
+@using Reports.Controllers.Cache
+@using CommonDLL.DTO
+@using CommonDLL.Object;
+@{
+    var cache = new CacheProvider();
+    var defaultDashboardId = cache.GetObjectByKeyAsInt(CacheVariable.HomeDashboardId);
+
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "DashboardGridView";
+        settings.SettingsSearchPanel.Visible = false;
+        settings.CallbackRouteValues = new { Controller = "Home", Action = "DashboardGridPartialView" };
+
+        settings.SettingsBehavior.AllowEllipsisInText = false;
+
+        settings.Height = Unit.Percentage(100);
+        settings.Styles.Header.CssClass = "grid-header";
+        // ////settings.Styles.Cell.Font.Size = 11;
+
+        settings.ControlStyle.Border.BorderStyle = System.Web.UI.WebControls.BorderStyle.None;
+        settings.Settings.GridLines = System.Web.UI.WebControls.GridLines.None;
+        settings.Styles.CommandColumn.Border.BorderStyle = System.Web.UI.WebControls.BorderStyle.None;
+
+        settings.KeyFieldName = "Id";
+
+        settings.SettingsPager.Visible = false;
+        settings.SettingsPager.PageSizeItemSettings.ShowAllItem = true;
+        settings.SettingsPager.PageSize = 100;
+
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = Color.Azure;
+        settings.Settings.ShowColumnHeaders = false;
+        settings.Settings.ShowFilterRow = false;
+
+        settings.Columns.Add(column =>
+        {
+            column.ColumnType = MVCxGridViewColumnType.Image;
+            column.Width = Unit.Percentage(20);
+            column.Visible = true;
+            column.SetDataItemTemplateContent(c => Html.DevExpress().Image(image =>
+            {
+                var canEdit =   (bool)DataBinder.Eval(c.DataItem, "CanEdit");
+                var isLocked = (bool)DataBinder.Eval(c.DataItem, "IsLocked");
+                image.Name = string.Format("dashboard_row_{0}", c.VisibleIndex);
+                image.ImageUrl = (canEdit && !isLocked) ? "~/Content/Images/Buttons/Edit.png" : null;
+                image.ClientEnabled = (canEdit && !isLocked) ? true : false;
+                image.ClientVisible = (canEdit && !isLocked);
+                image.Style.Add("cursor", "pointer");
+                image.Style.Add("padding-top", "5px");
+                image.Properties.ClientSideEvents.Click = "function(s, e) { EditDashBoardRow(" + c.KeyValue.ToString() + "); }";
+                image.ToolTip = "Edit Dashboard";
+            }).Render());
+
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Name";
+            column.Caption = "Name";
+            column.ColumnType = MVCxGridViewColumnType.Default;
+            column.Visible = true;
+            column.Settings.ShowFilterRowMenu = DefaultBoolean.False;
+            column.Settings.ShowInFilterControl = DefaultBoolean.False;
+            column.Settings.AllowAutoFilter = DefaultBoolean.False;
+            column.Settings.AllowHeaderFilter = DefaultBoolean.False;
+            column.Settings.AllowEllipsisInText = DefaultBoolean.True;
+        });
+
+
+        settings.HtmlDataCellPrepared = (sender, e) =>
+        {
+            if (e.DataColumn.FieldName == "Name")
+            {
+                if (e.CellValue != null)
+                {
+                    e.Cell.ToolTip = string.Format("{0}", e.GetValue("Name"));
+                    e.Cell.Attributes.Add("onClick", string.Format("CacheHomeDashboardId('{0}');",   e.KeyValue));
+                    if (defaultDashboardId.ToString() == e.KeyValue.ToString())
+                    {
+                        e.Cell.CssClass = "active-cell";
+                    }
+
+                }
+            }
+        };
+
+        settings.InitNewRow = (s, e) =>
+        {
+            e.NewValues["IsActive"] = true;
+        };
+
+        if (ViewData["GridException"] != null)
+        {
+            settings.SetFooterRowTemplateContent(c =>
+            {
+                Html.ViewContext.Writer.Write(ViewData["GridException"]);
+            });
+        }
+
+        settings.BeforeGetCallbackResult = (s, e) =>
+        {
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)s;
+                gridView.Settings.ShowFooter = true;
+            }
+        };
+
+        settings.PreRender = (sender, e) =>
+        {
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)sender;
+                gridView.Settings.ShowFooter = true;
+            }
+
+        };
+
+        ReportSettings.GridViewFeaturesHelper.GenericSettings(settings);
+    });
+
+
+    if (ViewData["GridException"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GridException"]);
+    }
+    }
+    @grid.Bind(Model).GetHtml()

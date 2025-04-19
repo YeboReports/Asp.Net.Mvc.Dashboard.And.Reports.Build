@@ -1,0 +1,36 @@
+﻿<script type="text/javascript">
+
+    function onShowChooserClick(s, e) {
+        UpdateCustomizationWindowVisibility();
+    }
+    function grid_CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateCustomizationWindowVisibility() {
+        if (ReportGridView.IsCustomizationWindowVisible())
+            ReportGridView.HideCustomizationWindow();
+        else
+            ReportGridView.ShowCustomizationWindow();
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = ReportGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        text += " Column Chooser";
+        btShowColumnChooser.SetText(text);
+    }
+
+
+    function OnRowDoubleClick(s, e) {
+
+
+        var grid = MVCxClientGridView.Cast(s);
+        var key = grid.GetRowKey(e.visibleIndex);
+        var url = '@Url.Action("Index", "ReportData")?Id=' + key;
+        window.location.href = url;
+
+    }
+
+</script>
+
+ 
+ 

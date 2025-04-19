@@ -1,0 +1,59 @@
+﻿<table style="width: 100%;">
+    <tr>
+        <td style="width: 100%;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;">
+                        @Html.DevExpress().Label(settings =>
+                                  {
+                                      settings.Name = "lblMessageToUser";
+                                      settings.PreRender = (sender, e) =>
+                                      {
+                                          ASPxLabel lb = (ASPxLabel)sender;
+                                          lb.ClientInstanceName = "lblMessageToUser";
+                                          settings.ClientVisible = false;
+                                      };
+                                  }).GetHtml()
+                    </td>
+                </tr>
+            </table>
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 100%;height: 40px"></td>
+                </tr>
+            </table>
+            <table style="width: 100%;">
+                <tr>
+                    <td style="float: right;">
+
+                        @Html.DevExpress().Button(settings =>
+                             {
+                                 settings.Name = "btnYesChangeUser";
+                                 settings.Text = "Yes";
+                                 settings.UseSubmitBehavior = false;
+                                 settings.ClientVisible = false;
+                                 settings.ClientSideEvents.Click = "function(s, e) { ChangeUser(); }";
+                             }).GetHtml()
+                         @Html.DevExpress().Button(settings =>
+                             {
+                                 settings.Name = "btnYesCloseUser";
+                                 settings.Text = "Yes";
+                                 settings.UseSubmitBehavior = false;
+                                 settings.ClientVisible = false;
+                                 settings.ClientSideEvents.Click = "function(s, e) {CloseUser(); }";
+                             }).GetHtml()
+                        @Html.DevExpress().Button(settings =>
+                              {
+                                  settings.Name = "btnCancelMessageUser";
+                                  settings.Text = "Cancel";
+                                  settings.UseSubmitBehavior = false;
+                                  settings.ClientVisible = false;
+                                  settings.ClientSideEvents.Click = "function(s, e) { MessageBoxUser.Hide(); }";
+                              }).GetHtml()
+
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

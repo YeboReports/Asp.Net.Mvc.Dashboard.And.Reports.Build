@@ -1,0 +1,161 @@
+﻿<script type="text/javascript">
+
+  
+
+
+    function SubmitThemeData(s,e)
+    {
+        LoadingPanel.Show();
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", '@Url.Action("ChangeTheme", "MyProfile")');
+        xhr.onload = function (event)
+        {
+            LoadingPanel.Hide();
+            var result = JSON.parse(event.target.response);
+            if (result.Success == true)
+            {
+                SharedMessageBox.Show();
+                lblCommonMessage.SetText("Theme Updated, refresh the page to see the changes");
+                //btnSendThemeData.Hide();
+                location.reload();
+
+            } else
+            {
+                SharedMessageBox.Show();
+                lblCommonMessage.SetText(result.errorMsg);
+            }
+
+        };
+
+        var formData = new FormData(document.getElementById("ChangeTheme"));
+        xhr.send(formData);
+
+      }
+
+
+</script>
+
+<fieldset>
+    <form id="ChangeTheme" name="ChangeTheme">
+        <table cellpadding="6"  cellspacing="6">
+            <tr>
+                <td valign="top">
+                    @Html.DevExpress().Label(settings =>
+                    {
+                       settings.Text = "Select Theme";
+                       settings.ClientEnabled = true;
+                    }).GetHtml()
+                </td>
+                <td>
+
+                    @Html.DevExpress().ComboBox(listBoxSettings =>
+               {
+                   listBoxSettings.Name = "Theme";
+                   listBoxSettings.ControlStyle.Border.BorderWidth = 0;
+                   listBoxSettings.ControlStyle.BorderBottom.BorderWidth = 1;
+
+                   listBoxSettings.Width = Unit.Percentage(100);
+
+                   listBoxSettings.Properties.Items.Add("Aqua", "Aqua");
+                   listBoxSettings.Properties.Items.Add("BlackGlass", "BlackGlass");
+
+                   listBoxSettings.Properties.Items.Add("DevEx", "DevEx");
+                   listBoxSettings.Properties.Items.Add("Glass", "Glass");
+                   listBoxSettings.Properties.Items.Add("iOS", "iOS");
+                   listBoxSettings.Properties.Items.Add("Material", "Material").Selected = true;
+                    
+                   listBoxSettings.Properties.Items.Add("MaterialCompact", "MaterialCompact");
+                   listBoxSettings.Properties.Items.Add("Metropolis", "Metropolis");
+
+                   listBoxSettings.Properties.Items.Add("MetropolisBlue", "MetropolisBlue");
+                   listBoxSettings.Properties.Items.Add("Moderno", "Moderno");
+                   listBoxSettings.Properties.Items.Add("Mulberry", "Mulberry");
+
+                   listBoxSettings.Properties.Items.Add("Office365", "Office365");
+                   listBoxSettings.Properties.Items.Add("Office2003Silver", "Office2003Silver");
+                   listBoxSettings.Properties.Items.Add("Office2003Olive", "Office2003Olive");
+                   listBoxSettings.Properties.Items.Add("Office2003Blue", "Office2003Blue");
+                   listBoxSettings.Properties.Items.Add("Office2010Silver", "Office2010Silver");
+                   listBoxSettings.Properties.Items.Add("Office2010Blue", "Office2010Blue");
+                   listBoxSettings.Properties.Items.Add("Office2010Black", "Office2010Black");
+
+                   listBoxSettings.Properties.Items.Add("PlasticBlue", "PlasticBlue");
+                   listBoxSettings.Properties.Items.Add("RedWine", "RedWine");
+                   listBoxSettings.Properties.Items.Add("SoftOrange", "SoftOrange");
+                   listBoxSettings.Properties.Items.Add("XafTheme", "XafTheme");
+                   listBoxSettings.Properties.Items.Add("Youthful", "Youthful");
+
+               }).GetHtml()
+                </td>
+            </tr>
+
+
+            <tr>
+                <td valign="top">
+                    @Html.DevExpress().Label(settings =>
+                    {
+                       settings.Text = "Select Style";
+                       settings.ClientEnabled = true;
+                    }).GetHtml()
+                </td>
+                <td>
+                    @Html.DevExpress().ComboBox(listBoxSettings =>
+               {
+                   listBoxSettings.Name = "Style";
+                   listBoxSettings.ControlStyle.Border.BorderWidth = 0;
+                   listBoxSettings.ControlStyle.BorderBottom.BorderWidth = 1;
+
+                   listBoxSettings.Width = Unit.Percentage(100);
+
+                   listBoxSettings.Properties.Items.Add("Aqua", "Aqua");
+                   listBoxSettings.Properties.Items.Add("BlackGlass", "BlackGlass");
+
+                   listBoxSettings.Properties.Items.Add("DevEx", "DevEx");
+                   listBoxSettings.Properties.Items.Add("Glass", "Glass");
+                   listBoxSettings.Properties.Items.Add("iOS", "iOS").Selected = true;
+                   listBoxSettings.Properties.Items.Add("Material", "Material");
+
+                   listBoxSettings.Properties.Items.Add("MaterialCompact", "MaterialCompact");
+                   listBoxSettings.Properties.Items.Add("Metropolis", "Metropolis");
+
+                   listBoxSettings.Properties.Items.Add("MetropolisBlue", "MetropolisBlue");
+                   listBoxSettings.Properties.Items.Add("Moderno", "Moderno");
+                   listBoxSettings.Properties.Items.Add("Mulberry", "Mulberry");
+
+                   listBoxSettings.Properties.Items.Add("Office365", "Office365");
+                   listBoxSettings.Properties.Items.Add("Office2003Silver", "Office2003Silver");
+                   listBoxSettings.Properties.Items.Add("Office2003Olive", "Office2003Olive");
+                   listBoxSettings.Properties.Items.Add("Office2003Blue", "Office2003Blue");
+                   listBoxSettings.Properties.Items.Add("Office2010Silver", "Office2010Silver");
+                   listBoxSettings.Properties.Items.Add("Office2010Blue", "Office2010Blue");
+                   listBoxSettings.Properties.Items.Add("Office2010Black", "Office2010Black");
+
+                   listBoxSettings.Properties.Items.Add("PlasticBlue", "PlasticBlue");
+                   listBoxSettings.Properties.Items.Add("RedWine", "RedWine");
+                   listBoxSettings.Properties.Items.Add("SoftOrange", "SoftOrange");
+                   listBoxSettings.Properties.Items.Add("XafTheme", "XafTheme");
+                   listBoxSettings.Properties.Items.Add("Youthful", "Youthful");
+
+               }).GetHtml()
+
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <br/>
+                    @Html.DevExpress().Button(settings =>
+                    {
+                       settings.Name = "btnSendThemeData";
+                       settings.Text = "Update";
+                       settings.ClientEnabled = true;
+                       settings.UseSubmitBehavior = false;
+                       settings.ClientSideEvents.Click = "function(s,e){ SubmitThemeData(s,e); }";
+                    }).GetHtml()
+                </td>
+            </tr>
+        </table>
+    </form>
+
+</fieldset>
+
+

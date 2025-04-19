@@ -1,0 +1,75 @@
+﻿@using CommonDLL.DTO
+@using Stimulsoft.Report.Web;
+@using Stimulsoft.Report.Mvc;
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_mainLayout.cshtml";
+}
+<div class="divTop">
+    Dashboards
+</div>
+<script type="text/javascript">
+
+
+    function CacheHomeDashboardId(_Id)
+    {
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("CacheHomeDashboardId", "Home")',
+            data:
+            {
+                Id: _Id
+            },
+            success: function (response)
+            {
+
+                location.reload();
+            }
+        });
+    }
+
+    function EditDashBoardRow(_Id)
+    {
+
+        window.location.href = '@Url.Action("Index", "DashboardDesign")?Id=' + _Id;
+
+    }
+
+
+
+</script>
+
+<table style="width:100%">
+
+
+    <tr>
+
+        <td valign="top" style="width:15%"> @Html.Action("DashboardGridPartialView") </td>
+
+        <td valign="top" style="width:75%">
+
+            @Html.Stimulsoft().StiMvcViewer("DashboardView1", new StiMvcViewerOptions()
+       {
+           Toolbar =
+            {
+               ShowOpenButton = false
+
+            },
+           Appearance = {
+                 ShowTooltipsHelp = false,
+                 AllowMobileMode = false
+         },
+           Actions =
+                      {
+                               GetReport = "GetReport",
+                               ViewerEvent = "ViewerEvent",
+                     }
+       })
+        </td>
+
+    </tr>
+</table>
+
+
+@Html.Partial("_Debug")

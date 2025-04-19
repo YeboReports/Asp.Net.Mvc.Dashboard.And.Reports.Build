@@ -1,0 +1,234 @@
+﻿@using System.Drawing
+@using BusinessLogic.Logic;
+@using Reports.Controllers.Cache
+@{
+
+
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "ErrorLogGridView";
+
+        settings.CallbackRouteValues = new
+        {
+            Controller = "ErrorLog",
+            Action = "ErrorLogGridPartialView" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "ErrorLog", Action = "Delete" };
+        settings.SettingsSearchPanel.Visible = false;;
+        settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
+        settings.SettingsPopup.EditForm.HorizontalAlign = PopupHorizontalAlign.WindowCenter;
+        settings.SettingsPopup.EditForm.VerticalAlign = PopupVerticalAlign.WindowCenter;
+        settings.SettingsPopup.EditForm.Modal = true;
+        settings.SettingsPopup.EditForm.Width = Unit.Pixel(500);
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsText.PopupEditFormCaption = "";
+        settings.Width = Unit.Percentage(100);
+        settings.SettingsEditing.EditFormColumnCount = 1;
+        settings.Height = Unit.Percentage(30);
+        settings.Styles.Header.CssClass = "grid-header";
+        ////settings.Styles.Cell.Font.Size = 11;
+
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.AllowCellMerge = false;
+        // settings.SettingsAdaptivity.AdaptivityMode = GridViewAdaptivityMode.HideDataCells;
+        // settings.SettingsAdaptivity.AdaptiveColumnPosition = GridViewAdaptiveColumnPosition.Right;
+        // settings.SettingsAdaptivity.AdaptiveDetailColumnCount = 1;
+        // settings.SettingsAdaptivity.AllowOnlyOneAdaptiveDetailExpanded = false;
+        // settings.SettingsAdaptivity.HideDataCellsAtWindowInnerWidth = 0;
+
+        //settings.SettingsPopup.EditForm.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.OnWindowInnerWidth;
+        //settings.SettingsPopup.EditForm.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+        //settings.SettingsPopup.EditForm.SettingsAdaptivity.MaxWidth = Unit.Pixel(450);
+
+        settings.SettingsCommandButton.NewButton.Image.IconID = "actions_add_16x16office2013";
+        settings.SettingsCommandButton.NewButton.RenderMode = GridCommandButtonRenderMode.Image;
+        settings.SettingsCommandButton.EditButton.Image.IconID = "actions_edit_16x16devav";
+        settings.SettingsCommandButton.EditButton.RenderMode = GridCommandButtonRenderMode.Image;
+        settings.SettingsCommandButton.DeleteButton.Image.IconID = "actions_cancel_16x16office2013";
+        settings.SettingsCommandButton.DeleteButton.RenderMode = GridCommandButtonRenderMode.Image;
+        //settings.SettingsCommandButton.UpdateButton.ButtonType = GridCommandButtonRenderMode.Button;
+        //settings.SettingsCommandButton.CancelButton.ButtonType = GridCommandButtonRenderMode.Button;
+
+        settings.CommandButtonInitialize = (sender, e) =>
+        {
+            var grd = sender as MVCxGridView;
+            if (e.ButtonType == ColumnCommandButtonType.Delete)
+            {
+                var isLocked = grd.GetRowValues(e.VisibleIndex, "IsLocked");
+                if ((bool)isLocked)
+                {
+                    e.Visible = false;
+                }
+            }
+
+        };
+
+        settings.SettingsExport.EnableClientSideExportAPI = true;
+        settings.Toolbars.Add(t =>
+        {
+            t.EnableAdaptivity = true;
+            t.Items.Add(GridViewToolbarCommand.ExportToPdf);
+            t.Items.Add(GridViewToolbarCommand.ExportToXls);
+            t.Items.Add(GridViewToolbarCommand.ExportToCsv);
+            t.Items.Add(GridViewToolbarCommand.ExportToXlsx);
+        });
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.ShowNewButtonInHeader = false;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowEditButton = false;
+        settings.CommandColumn.ShowSelectButton = false;
+        settings.CommandColumn.Width = Unit.Percentage(3);
+
+        settings.Settings.ShowFilterRow = true;
+        settings.Settings.ShowGroupPanel = false;;
+
+        settings.KeyFieldName = "Id";
+
+        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.SettingsPager.FirstPageButton.Visible = true;
+        settings.SettingsPager.LastPageButton.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Items = new[] { "5", "10", "15", "20", "50", "100", "200", "500" };
+        settings.SettingsPager.PageSizeItemSettings.ShowAllItem = true;
+        settings.SettingsPager.PageSize = 15;
+
+        // settings.Styles.CommandColumn.Spacing = new Unit(10);
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = Color.Azure;
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "ScreenName";
+            column.Caption = "ScreenName";
+            column.ColumnType = MVCxGridViewColumnType.Default;
+            column.Visible = true;
+
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Message";
+            column.Caption = "Message";
+            column.ColumnType = MVCxGridViewColumnType.Default;
+            column.Visible = true;
+        });
+
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "StackTrace";
+            column.Caption = "StackTrace";
+            column.ColumnType = MVCxGridViewColumnType.Default;
+            column.Visible = true;
+
+        });
+
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "CreatedByDateTime";
+            column.Caption = "Date";
+            column.ColumnType = MVCxGridViewColumnType.Default;
+            column.PropertiesEdit.DisplayFormatString = "dd MMM yyyy HH:mm:ss";
+
+            column.Visible = true;
+
+        });
+
+        settings.CommandColumn.SetHeaderTemplateContent(c =>
+        {
+
+            Html.DevExpress().Button(btnSettings =>
+            {
+                btnSettings.Name = "DeleteAll";
+                btnSettings.Images.Image.IconID = "actions_cancel_16x16office2013";
+                btnSettings.RenderMode = ButtonRenderMode.Link;
+                btnSettings.Text = "";
+                btnSettings.ImagePosition = ImagePosition.Right;
+                btnSettings.ClientSideEvents.Click = "function(){ DeleteAllLog(); }";
+            }).GetHtml();
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.Caption = "Locked";
+            column.SetDataItemTemplateContent(c =>
+            {
+
+                var isLocked = (bool)DataBinder.Eval(c.DataItem, "IsLocked");
+
+                Html.DevExpress().Image(reptImage =>
+                {
+                    reptImage.Name = "image_error" + DataBinder.Eval(c.DataItem, "Id");
+                    reptImage.ImageUrl = isLocked ? "~/Content/Images/Grid/Lock.png" : "~/Content/Images/Grid/open_lock.png";
+                }).GetHtml();
+
+            });
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(100);
+        });
+
+
+        if (ViewData["GridException"] != null)
+        {
+            settings.SetFooterRowTemplateContent(c =>
+            {
+                Html.ViewContext.Writer.Write(ViewData["GridException"]);
+            });
+        }
+
+        settings.BeforeGetCallbackResult = (s, e) =>
+        {
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)s;
+                gridView.Settings.ShowFooter = true;
+            }
+        };
+
+        settings.PreRender = (sender, e) =>
+        {
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)sender;
+                gridView.Settings.ShowFooter = true;
+            }
+
+        };
+
+        ReportSettings.GridViewFeaturesHelper.GenericSettings(settings);
+
+    });
+
+
+    if (ViewData["GridException"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GridException"]);
+    }
+}
+@grid.Bind(Model).GetHtml()
+<script type="text/javascript">
+           function DeleteAllLog()
+    {
+
+         $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeleteAll", "ErrorLog")',
+                data:
+                {
+                },
+                success: function (response)
+                {
+
+
+                    ErrorLogGridView.PerformCallback();
+                }
+            });
+
+    }
+</script>

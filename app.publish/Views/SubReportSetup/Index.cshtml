@@ -1,0 +1,105 @@
+﻿@using CommonDLL.DTO
+@{
+    ViewBag.Title = "Report";
+    Layout = "~/Views/Shared/_mainLayout.cshtml";
+}
+<div class="divTop">
+    Sub Reports
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.Action("SubReportGridViewPartial", "SubReportSetup")
+}
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.HeaderText = "Report Setup Colums";
+    settings.Styles.Header.Font.Size = 10;
+    settings.Name = "SubReportSetupColumnToDropDownPopup";
+    settings.Style.Add("Color", "Gray");
+    settings.Style.Add("border-color", "Gray");
+    settings.Style.Add("border-width", "2px");
+    settings.AllowDragging = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.Height = Unit.Percentage(50);
+    settings.Width = Unit.Pixel(350);
+    settings.PopupAnimationType = AnimationType.None;
+    settings.Modal = true;
+    settings.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+    settings.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+    settings.ClientSideEvents.CloseButtonClick = "function(s, e) {ReloadReportGrid(); }";
+    settings.SetContent(() => Html.RenderPartial("_SubReportSetupColumnToDropDownGridViewList", null));
+}).GetHtml()
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.HeaderText = "Rename Colums";
+    settings.Styles.Header.Font.Size = 10;
+    settings.Name = "SubReportSetupRenameColumnPopup";
+    settings.Style.Add("Color", "Gray");
+    settings.Style.Add("border-color", "Gray");
+    settings.Style.Add("border-width", "2px");
+    settings.AllowDragging = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.Height = Unit.Percentage(50);
+    settings.Width = Unit.Pixel(350);
+    settings.PopupAnimationType = AnimationType.None;
+    settings.Modal = true;
+    settings.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+    settings.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+    settings.ClientSideEvents.CloseButtonClick = "function(s, e) {ReloadReportGrid(); }";
+    settings.SetContent(() => Html.RenderPartial("_SubReportColumnRenameGridViewList", null));
+}).GetHtml()
+
+<script type="text/javascript">
+
+    function ReloadReportGrid()
+    {
+
+        ReportGridView.PerformCallback();
+
+
+    }
+
+
+           function ShowSubReportColumnSetupPopup(_Id)
+    {
+              
+               $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheSubReportEdited", "SubReportSetup")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                    SubReportSetupColumnToDropDownPopup.Show();
+                    SubReportSetupColumnToDropDownGrid.PerformCallback();
+                }
+            });
+
+    }
+
+    function ShowSubReportRenameColumnSetupPopup(_Id)
+    {
+         
+               $.ajax({
+                   type: "POST",
+                   url: '@Url.Action("CacheSubReportEdited", "SubReportSetup")',
+                   data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                    SubReportSetupRenameColumnPopup.Show();
+                    ColumnRenameGridViewList.PerformCallback();
+                }
+            });
+
+    }
+</script>

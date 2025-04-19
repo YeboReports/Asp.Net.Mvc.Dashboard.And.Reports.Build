@@ -1,0 +1,39 @@
+﻿@using BusinessLogic.Logic;
+@using Reports.Controllers.Cache;
+@model CommonDLL.DTO.SubReportDataTabDTO
+
+@{
+
+    @Html.DevExpress().PageControl(
+    settings =>
+    {
+        settings.Name = Model.TabName;
+        settings.Width = Unit.Percentage(100);
+
+        foreach (var repo in Model.SubReports)
+        {
+
+            settings.TabPages.Add(repo.Name).SetContent(() =>
+            {
+
+                using(Html.BeginForm())
+                    {
+                    Html.RenderAction("SubReportDataPartialGrid", "SubReportData", new
+                    {
+
+                        SubReportId = repo.Id,
+                        ParentId = Model.ParentId
+
+                    });
+                }
+
+                 
+            });
+
+        }
+
+
+    }).GetHtml()
+
+
+}

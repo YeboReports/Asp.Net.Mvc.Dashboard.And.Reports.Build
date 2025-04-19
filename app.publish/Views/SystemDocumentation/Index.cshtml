@@ -1,0 +1,341 @@
+﻿@{
+    ViewBag.Title = "Demo";
+    Layout = "~/Views/Shared/_rootLayout.cshtml";
+}
+
+<div style="padding: 10px; height: 100%; overflow-y:scroll">
+
+    <h2> Getting Started </h2>
+
+    <h3>1. Creating Stored Procedures  </h3>
+
+    The first step towards created a Dashboard and Reports is to create a stored procedures to fetch the data.
+    For our On line demo we have already created stored procedures for you.
+
+    <h4> Store procedures for Reports, Dashboards and Vertical reports: </h4>
+
+    <ul>
+        <li>stp_Test_Courses_Status </li>
+        <li>stp_Test_Courses_GetAll</li>
+        <li>stp_Test_Students_GetAll</li>
+        <li>stp_Test_University_Assets </li>
+        <li>stp_Test_Universtiy_Workers_GetAll</li>
+        <li>stp_Test_University_Awards</li>
+
+
+    </ul>
+
+    <h4> Store procedures for  Sub reports only: </h4>
+    <ul>
+        <li> stp_Test_Student_Payments_GetAll</li>
+        <li>stp_Test_Student_Course_GetAll</li>
+    </ul>
+    We will explain later on what is a sub report.
+
+    <h3>2. Creating Reports  </h3>
+
+
+
+    <ul>
+
+        <li>
+            <i> Task  1  </i> <br />
+            <strong>Creating Permission first </strong>
+            <br />
+            Before you create a report/dashboard/vertical report it is better to standard with permisison first.
+            That will lead to less confusion. Permissions are called 'Roles', think of a role as a user department.
+            So you need to create Roles as follows
+            <ul>
+                <li>Finance Department Role </li>
+                <li>IT Department Role </li>
+                <li>Marketing Role </li>
+            </ul>
+            There are times where a manager of a department has extra reports that other users cant see.
+            In that case we create another role
+            <ul>
+                <li>Finance Department <b>Manager </b> Role </li>
+                <li>IT Department <b>Manager</b> Role </li>
+                <li>Marketing <b>Manager</b> Role </li>
+            </ul>
+            <br />
+
+            <br />
+            To Create a Role, Goto <b>Settings/Roles</b>
+            <br />
+            Click the '+' on the Roles Grid, Add a new Role and Click Update
+
+            <img class="demo_images" src="~/Content/Images/Demo/Add Roles.png" />
+            <br />
+        </li>
+
+
+        <li>
+            <i> Task  2  </i> <br />
+            <strong>Assigning Roles to the User </strong>
+
+            <br />
+            To Assign a role to the user, go to <b>Settings/Users/Roles Column</b> Click
+            the '+' on the Roles Column for the user "Demo Test".
+
+            You will see a list of Roles
+            that you created on <i>Task 1</i>. Choose the roles that you need and Click Update.
+            <br />
+            <img class="demo_images" src="~/Content/Images/Demo/Assign Role To User.png" />
+            <br />
+            For this demo let us choose the following roles:
+            <ul>
+                <li> Finance Department Role </li>
+                <li> Finance Department Manager Role </li>
+            </ul>
+            <br />
+
+        </li>
+
+
+        <li>
+            <i> Task 3 </i>
+
+            <b>  Create the Report </b>
+            <br />
+
+            <ul>
+
+                <li> Go to Settings/Report, Click the 'Plus' on the Grid header </li>
+                <li>
+                    <div>Fill in the Report name  </div>
+
+                    On your stored procedure, select <i> stp_Test_Students_GetAll </i>
+
+
+                </li>
+                <li> Save your form</li>
+
+
+            </ul>
+
+
+            <img class="demo_images" src="~/Content/Images/Demo/Add Report.png" />
+
+            <br />
+
+
+
+
+
+        </li>
+
+        <li>
+            <i> Task 4 </i>
+            <strong> Setting up report permission </strong>   <br />
+            The report that we created on <i> Task 3  </i>doesnt have any permission, so no body will see it.
+            <ul>
+                <li>Look for the report that we created on <i> Task 3  </i>, look for column Roles, Click the plus on the Roles column  </li>
+                <li> Add the 'finance department role' and click update </li>
+                <li> You will see a new report on your menu, See screenshot below Point 7 </li>
+            </ul>
+            <img class="demo_images" src="~/Content/Images/Demo/Add Report Role.png" />
+
+
+
+        </li>
+
+        <li>
+
+
+            <i> Task 5 </i>
+            <strong> Viewing Report Data  </strong>   <br />
+            <br />
+            You should see a new menu <i> Reports  </i>, Look for a the report that you created and click it.
+            <img class="demo_images" src="~/Content/Images/Demo/Report Data.png" />
+
+
+
+
+        </li>
+
+        <li>
+
+
+            <i> Task 6 </i>
+            <strong> Adding a SubReport  </strong>   <br />
+            <br />
+            <ul>
+                <li>Go to Settings/SubReport </li>
+                <li>Click the '+' on the subReport Grid </li>
+                <li>Fill in the name , on the stored procedure select  <i>stp_Test_Student_Course_GetAll</i>
+            </ul>
+            <img class="demo_images" src="~/Content/Images/Demo/Report Data.png" />
+
+            <br />
+            Note: You dont need to setup permission for the subreport.
+            <br />
+            <br />
+        </li>
+
+
+        <li>
+
+
+            <i> Task 7 </i>
+            <strong> Linking a SubReport to the Report  </strong>   <br />
+            <br />
+            <ul>
+                <li> Go to Settings/Report </li>
+                <li> Find the first Report that you created on <i>Task 3 </i></li>
+                <li> Locate the colum <i>SubReport</i> ,Click the '+' icon, then select the subreport that we created on <i>Task 6 </i> </li>
+
+            </ul>
+            <img class="demo_images" src="~/Content/Images/Demo/Link Sub Report.png" />
+
+
+
+            <br /><br />
+        </li>
+
+
+        <li>
+
+            <i> Task 8 </i>
+            <strong> Viewing a SubReport Data  </strong>   <br />
+            <br />
+            <ul>
+                <li> Go to Reports </li>
+                <li> Find the first Report that you created on <i>Task 3 </i></li>
+                <li> Click the Report </li>
+                <li> You will see an icon on the first column, click that icon, a subreport with data will show </li>
+            </ul>
+
+            <img class="demo_images" src="~/Content/Images/Demo/Display SubReport.png" />
+
+            <br /><br />
+
+            <br />
+        </li>
+
+        <li>
+
+            <i> Task 9 </i>
+            <strong> Editting report settings  </strong>   <br />
+            <br />
+            At the moment we cant down the data into Excel,let us fix that
+            <ul>
+                <li> Go to Settings/Report </li>
+                <li>  Click the edit icon</li>
+                <li> Change IsDataExportAllowed to <i> checked</i> </li>
+                <li> Change Show SubReport as popup to <i> checked</i> </li>
+                <li> Click Update </li>
+            </ul>
+
+            <img class="demo_images" src="~/Content/Images/Demo/Edit Report Settings.png" />
+
+            <br /><br />
+            Let us view our changes.
+            <ul>
+                <li>Go to Reports/Select your report. </li>
+                <li>You see an option to Export the report and your subreport will now open as popup</li>
+            </ul>
+            <img class="demo_images" src="~/Content/Images/Demo/Report Data with Export.png" />
+            <br />
+            <br />
+        </li>
+
+    </ul>
+
+
+
+    <h3>2. Creating A Dashboard  </h3>
+
+    Dashboard needs permission as well, but we will not create new permission since we created them on <i>Task 1</i>
+
+   
+
+    <ul>
+
+        <li>
+            <i>Task 9 </i>  <strong>Create dashboard </strong>
+            <br />
+            First step is to Create a Dashboard info.
+
+            <ul>
+                <li>  To create a dashboard Go to Settings/Dashboard  </li>
+                <li>  Click the 'Plus' on the Grid header - Then Add a new Dashboard </li>
+
+            </ul>
+            <img class="demo_images" src="~/Content/Images/Demo/Add Dashboard.png" />
+        </li>
+
+        <li>
+            <i>Task 9 </i> Now we need to assign the Permission to the dashboard
+            <ul>
+                <li>Look for the dashboard that you have just created, Click '+' on the Role column   </li>
+
+                <li>
+                    Assign the same roles that you assigned to the report, check "CanEdit"
+                    <ul>
+                        <li> Finance Department Role </li>
+                        <li> Finance Department Manager Role </li>
+                    </ul>
+                </li>
+
+                <li> Select the Dashboard you have just created </li>
+                <li> Select the Permission 'CanEdit' </li>
+
+            </ul>
+            <img class="demo_images" src="~/Content/Images/Demo/Dashboard Role.png" />
+        </li>
+
+
+        <li>
+            Let us Edit the Dashboard and Add Graphs and Icons.
+
+            <ul>
+                <li> Goto the Dashboard that you created on stepm 8        </li>
+                <li> Click the Dashboard icon next to the Dashboard name     </li>
+            </ul>
+            <img class="demo_images" src="~/Content/Images/Demo/Edit Dashboard.png" />
+        </li>
+
+
+        <li>
+            Your can start editing your Dashboard
+
+            <ul>
+                <li> On your Far left, look for a list of icons </li>
+                <li> Locate a Text editor icon </li>
+                <li> Drag it into the screen </li>
+                <li> Edit the Text </li>
+                <li> Click "File" on the menu</li>
+                <li> Click "Save"</li>
+                <li> Click the Back button on your browser (Exit editor)</li>
+            </ul>
+            <div>   <img class="demo_images" src="~/Content/Images/Demo/Report Designer.png" /> </div>
+        </li>
+
+        <li>
+            Go to the Home page, you should see your New Dashboard.
+
+            <ul>
+                <li> <img class="demo_images" src="~/Content/Images/Demo/Home Screen.png" />   </li>
+            </ul>
+        </li>
+
+
+        <li>
+            Embed a Dashboard into another website. You can also send this link to someone to view the Dashboard without having to login.
+
+            <ul>
+                <li> On Main Menu, Click Settings/Dashboard/Dashboard Remote Access </li>
+                <li> Click the '+' icon </li>
+                <li> Fill in the Required info </li>
+                <li> Click "Save"</li>
+                <li>  Go to the new created row, copy the dashboard URL and Send it to your users</li>
+                <li>  <img class="demo_images" src="~/Content/Images/Demo/Dashboard Remote.png" />    </li>
+
+            </ul>
+        </li>
+
+    </ul>
+
+
+
+</div>

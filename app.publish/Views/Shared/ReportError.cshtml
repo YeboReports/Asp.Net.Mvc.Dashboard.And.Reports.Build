@@ -1,0 +1,10 @@
+@model CommonDLL.DTO.ErrorLogDTO
+@{ Layout = "~/Views/Shared/_mainLayout.cshtml"; }
+
+@{
+    ViewBag.Title = "Error";
+}
+<div class="accountHeader">
+    <h2>Error</h2>
+    <p> @Model.Message</p>
+</div>

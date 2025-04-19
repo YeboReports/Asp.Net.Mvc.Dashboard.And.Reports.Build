@@ -1,0 +1,41 @@
+@Html.DevExpress().PivotGrid(settings => {
+    settings.Name = "PivotGrid";
+    settings.CallbackRouteValues = new { Controller = "Test", Action = "PivotGridPartial" };
+
+    settings.Fields.AddField(new PivotGridField() {
+        ID = "fieldName",
+        FieldName = "Name",
+        Area = PivotArea.RowArea
+    });
+
+
+
+    settings.Fields.AddField(new PivotGridField() {
+        ID = "fieldDateDiff",
+        FieldName = "DateDiff",
+        Area = PivotArea.DataArea,
+        UnboundType = DevExpress.Data.UnboundColumnType.Object,
+        UnboundExpressionMode = UnboundExpressionMode.UseAggregateFunctions,
+        UnboundExpression = "DateDiffSecond(Min(AddTimeSpan([Date], [Time] )), Max(AddTimeSpan([Date], [Time])))"
+    });
+
+
+    settings.Fields.AddField(new PivotGridField()
+    {
+        ID = "fieldDateDiff2",
+        FieldName = "DateDiff2" +
+        "\" +
+        "",
+        Area = PivotArea.DataArea,
+        UnboundType = DevExpress.Data.UnboundColumnType.Object,
+        UnboundExpressionMode = UnboundExpressionMode.UseAggregateFunctions,
+        UnboundExpression = "DateDiffSecond(Min(AddTimeSpan([Date], [Time] )), Max(AddTimeSpan([Date], [Time])))"
+    });
+
+    settings.CustomCellDisplayText = (sender, e) => {
+        if(e.DataField != null && e.DataField.ID == "fieldDateDiff") {
+            e.DisplayText = TimeSpan.FromSeconds(Convert.ToInt32(e.Value)).ToString();
+        }
+    };
+
+}).Bind(Model).GetHtml()

@@ -1,0 +1,36 @@
+﻿@using BusinessLogic.Logic;
+@using DevExpress.Web.Mvc
+@using Reports.Controllers.Cache
+ 
+@{
+
+    Html.DevExpress().PageControl(
+     settings =>
+     {
+         settings.Name = "DashboardSetupTab";
+         settings.EnableTabScrolling = true;
+
+         settings.Width = Unit.Percentage(100);
+         settings.ControlStyle.CssClass = "dxtcFixed";
+
+         settings.TabPages.Add("Role Setup").SetContent(() =>
+         {
+             using (Html.BeginForm())
+             {
+                 Html.RenderAction("DashboardRoleGridPartialView", "DashboardRole", new { });
+             }
+         });
+
+         settings.TabPages.Add("Delete Dashboard").SetContent(() =>
+         {
+             using (Html.BeginForm())
+             {
+                 Html.RenderAction("DashboardGridPartialView", "DashboardSetup", new { });
+             }
+         });
+
+     }).GetHtml();
+
+}
+
+ 

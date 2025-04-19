@@ -1,0 +1,205 @@
+﻿@model CommonDLL.DTO.LoginDTO
+@using CommonDLL.Helper;
+@using Reports.Helpers;
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="~/Content/site.css" rel="stylesheet" />
+    <link href="~/Content/Login.css" rel="stylesheet" />
+    @Html.DevExpress().GetStyleSheets(
+       new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+       new StyleSheet { ExtensionSuite = ExtensionSuite.Editors },
+       new StyleSheet { ExtensionSuite = ExtensionSuite.GridView }
+)
+    @Html.DevExpress().GetScripts(
+        new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+        new Script { ExtensionSuite = ExtensionSuite.GridView },
+        new Script { ExtensionSuite = ExtensionSuite.Editors }
+    )
+
+    <title>Login</title>
+</head>
+<body>
+
+    <div class="centre">
+        <div>
+
+            <fieldset>
+                <script type="text/javascript">
+                    function LoginInputChanged() {
+
+                        if (Email.GetText() != null && Email.GetText().length >= 4 && Password.GetText() != null && Password.GetText().length >= 1) {
+                            LoginButton.SetEnabled(true);
+                        }
+
+                    }
+
+                    function OnFocus() {
+                        document.getElementById("ServerError").style.display = "none";
+                    }
+
+                    function ClearLogin() {
+
+                        Password.SetValue(null);
+                        Email.SetValue(null);
+                        document.getElementById("ServerError").style.display = "none";
+                        LoginButton.SetEnabled(false);
+                    }
+
+                </script>
+
+
+                <form class="login-form" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div style="padding:5px;">
+                        <h3 style="text-align:center"> Login </h3>
+                        <table cellpadding="5">
+                            <tr>
+                                <td colspan="2">
+
+                                    @if (Config.DemoMode)
+                                    {
+                                        <table style="background-color: buttonface;padding:5px; width: 100%">
+
+                                            <tr><td colspan="2" align="center"> <b> Demo Login Details </b>   </td> </tr>
+                                            <tr>
+                                                <td>
+                                                    @Html.DevExpress().Label(settings =>
+                                               {
+                                                   settings.Text = "Email  :  test@yeboreport.com";
+                                                   settings.Name = "DemoEmail";
+                                               }).GetHtml()
+
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    @Html.DevExpress().Label(settings =>
+                                                {
+                                                    settings.Text = "Password :  123";
+                                                    settings.ClientEnabled = true;
+                                                }).GetHtml()
+
+
+                                                </td>
+                                                <td>   </td>
+                                            </tr>
+                                        </table>
+                                    }
+
+                                </td>
+                            </tr>
+                            <tr>  <td> IP: </td> <td> @Helper.GetIPHelper() </td>   </tr>
+
+                            <tr>
+                                <td colspan="2">
+                                    <div style="max-width:350px; overflow:auto" id="ServerError">
+                                        @Html.ValidationMessage("ServerError")
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    @Html.DevExpress().Label(settings =>
+                                         {
+                                                                   settings.Text = "Email";
+                                                                   settings.ClientEnabled = true;
+                                                               }).GetHtml()
+                                </td>
+                                <td>
+                                    @Html.DevExpress().TextBox(settings =>
+                               {
+                                   settings.Name = "Email";
+                                   settings.ClientVisible = true;
+                                   settings.ClientEnabled = true;
+                                   settings.Properties.NullDisplayText = "Email address";
+                                   settings.Properties.NullText = "Email address";
+                                   settings.AutoCompleteType = AutoCompleteType.Disabled;
+                                   settings.Text = null;
+                                   settings.Width = Unit.Percentage(100);
+                                   settings.Properties.ClientSideEvents.GotFocus = "OnFocus";
+                                   settings.Properties.ClientSideEvents.TextChanged = "LoginInputChanged";
+                               }).GetHtml()
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @Html.DevExpress().Label(settings =>
+                                          {
+                                                                 settings.Text = "Password";
+                                                                 settings.ClientEnabled = true;
+                                                             }).GetHtml()
+                                </td>
+                                <td style="min-width: 200px;">
+                                    @Html.DevExpress().TextBox(settings =>
+                               {
+                                   settings.Name = "Password";
+                                   settings.ClientVisible = true;
+                                   settings.ClientEnabled = true;
+                                   settings.Width = Unit.Percentage(100);
+                                   settings.Properties.NullDisplayText = "Password";
+                                   settings.Properties.NullText = "Password";
+                                   settings.Properties.Password = true;
+                                   settings.Text = null;
+                                   settings.Properties.ClientSideEvents.GotFocus = "OnFocus";
+                                   settings.Properties.ClientSideEvents.TextChanged = "LoginInputChanged";
+                               }).GetHtml()
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    @Html.DevExpress().Button(settings =>
+                                         {
+                                    settings.Name = "LoginButton";
+                                    settings.Text = "Login";
+                                    settings.ClientEnabled = false;
+                                    settings.UseSubmitBehavior = true;
+
+                                    }).GetHtml()
+                                </td>
+                                <td align="right">
+                                    @Html.DevExpress().Button(settings =>
+                               {
+                                   settings.Name = "CancelButton";
+                                   settings.Text = "Cancel";
+                                   settings.ClientEnabled = true;
+                                   settings.UseSubmitBehavior = false;
+                                   settings.ClientSideEvents.Click = "function(){ ClearLogin(); }";
+                               }).GetHtml()
+                                </td>
+                            </tr>
+                        </table>
+
+
+
+                    </div>
+
+                </form>
+            </fieldset>
+        </div>
+
+        <style>
+            th, td {
+                padding: 9px;
+            }
+        </style>
+
+    </div>
+
+    <div style="text-align:center;font-size: small">
+        @DateTime.Now.Year Yebo Reports, All rights reserved. | 
+        <span>Use of this site constitutes acceptance of our website <a href='@Url.Action("Index", "Terms")'>Terms of Use </a> and <a href='@Url.Action("Index", "Privacy")'>Privacy Policy </a>
+        </span>
+    </div>
+
+</body>
+</html>

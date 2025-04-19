@@ -1,0 +1,332 @@
+﻿@using System.Drawing
+@using BusinessLogic.Logic;
+@using Reports.Controllers.Cache
+@{
+
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "DashboardGridView";
+        settings.SettingsSearchPanel.Visible = false;;
+        settings.CallbackRouteValues = new { Controller = "DashboardSetup", Action = "DashboardGridPartialView" };
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "DashboardSetup", Action = "DashboardGridPartialViewAdd" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "DashboardSetup", Action = "DashboardGridPartialViewDelete" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "DashboardSetup", Action = "DashboardGridPartialViewUpdate" };
+        settings.ClientSideEvents.EndCallback = "function(){ DashboardRoleGridView.PerformCallback(); }";
+
+        settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
+        settings.SettingsPopup.EditForm.HorizontalAlign = PopupHorizontalAlign.WindowCenter;
+        settings.SettingsPopup.EditForm.VerticalAlign = PopupVerticalAlign.WindowCenter;
+        settings.SettingsPopup.EditForm.Modal = true;
+        settings.SettingsPopup.EditForm.Width = Unit.Pixel(500);
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsText.PopupEditFormCaption = "";
+        settings.Width = Unit.Percentage(100);
+        settings.SettingsEditing.EditFormColumnCount = 1;
+        settings.Height = Unit.Percentage(30);
+        settings.Styles.Header.CssClass = "grid-header";
+        //settings.Styles.Cell.Font.Size = 11;
+
+        settings.SettingsCommandButton.NewButton.Image.IconID = "actions_add_16x16office2013";
+        settings.SettingsCommandButton.NewButton.RenderMode = GridCommandButtonRenderMode.Image;
+        settings.SettingsCommandButton.EditButton.Image.IconID = "actions_edit_16x16devav";
+        settings.SettingsCommandButton.EditButton.RenderMode = GridCommandButtonRenderMode.Image;
+        settings.SettingsCommandButton.DeleteButton.Image.IconID = "actions_cancel_16x16office2013";
+        settings.SettingsCommandButton.DeleteButton.RenderMode = GridCommandButtonRenderMode.Image;
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.ShowNewButtonInHeader = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.Width = Unit.Percentage(5);
+
+        settings.Settings.ShowFilterRow = true;
+        settings.Settings.ShowGroupPanel = false;;
+
+        settings.KeyFieldName = "Id";
+
+        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.SettingsPager.FirstPageButton.Visible = true;
+        settings.SettingsPager.LastPageButton.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Items = new[] { "5", "10", "15", "20", "50", "100","200","500" };
+        settings.SettingsPager.PageSizeItemSettings.ShowAllItem = true;
+        settings.SettingsPager.PageSize = 15;
+
+        settings.Styles.CommandColumn.Spacing = new Unit(10);
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = Color.Azure;
+
+        settings.CommandButtonInitialize = (sender, e) =>
+        {
+            var grd = sender as MVCxGridView;
+            if (e.ButtonType == ColumnCommandButtonType.Delete)
+            {
+                var isLocked = grd.GetRowValues(e.VisibleIndex, "IsLocked");
+                if ((bool)isLocked)
+                {
+                    e.Visible = false;
+                }
+            }
+            else if (e.ButtonType == ColumnCommandButtonType.Edit)
+            {
+                var isLocked = grd.GetRowValues(e.VisibleIndex, "IsLocked");
+                if ((bool)isLocked)
+                {
+                    e.Visible = false;
+                }
+
+            }
+        };
+
+        settings.Columns.Add(column =>
+        {
+            column.ColumnType = MVCxGridViewColumnType.Image;
+            column.Width = Unit.Percentage(2);
+            column.Visible = true;
+            column.SetDataItemTemplateContent(c =>
+            Html.DevExpress().Image(image =>
+            {
+                var islocked =  (bool)DataBinder.Eval(c.DataItem, "IsLocked");
+                image.Name = string.Format("EditDashboardTemplateId_{0}", c.VisibleIndex);
+                image.ImageUrl = "~/Content/Images/Menu/Dashboard.png";
+                image.ClientEnabled = !islocked;
+                image.ClientVisible = !islocked;
+                image.Properties.ClientSideEvents.Click = "function(s, e) { EditDashboardTemplate(" + c.KeyValue.ToString() + "); }";
+                image.ToolTip = "Edit Dashboard template";
+            }).Render());
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.SetColVisibleIndex(1);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Name";
+            column.Caption = "Name";
+            column.ColumnType = MVCxGridViewColumnType.Default;
+            column.Visible = true;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.Caption = "Roles";
+            column.SetDataItemTemplateContent(c =>
+            {
+                var id = (int)DataBinder.Eval(c.DataItem, "Id");
+                var roles = new RoleLogic().GetByDashboardId(id);
+                var isLocked = (bool)DataBinder.Eval(c.DataItem, "IsLocked");
+                var IsDemo = CommonDLL.Helper.Config.DemoMode;
+
+                Html.DevExpress().Image(reptImage =>
+                {
+                    reptImage.Name = "UserRolesPopupimage_" + id;
+                    reptImage.ImageUrl = "~/Content/Images/Buttons/Add.png";
+                    reptImage.Properties.ClientSideEvents.Click = "function(){ ShowDashboardRolePopup('" + id + "'); }";
+                    reptImage.ClientEnabled = !isLocked;
+                    reptImage.ClientVisible = !isLocked;
+                    if (IsDemo)
+                    {
+                        reptImage.ClientEnabled = true;
+                        reptImage.ClientVisible = true;
+                    }
+
+                }).GetHtml();
+
+                ViewContext.Writer.Write("<table>");
+                foreach (var role in roles)
+                {
+
+                    ViewContext.Writer.Write("<tr><td>" + role.Name + "</td></tr>");
+
+                }
+
+                ViewContext.Writer.Write("</table>");
+
+                if (roles.Count == 0)
+                {
+                    ViewContext.Writer.Write("<div style=\"font-size:small;background-color:#eed202;padding:3px\"> No Roles</div>");
+                }
+
+            });
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "IsActive";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "IsActive";
+            column.Visible = true;
+            column.ColumnType = MVCxGridViewColumnType.CheckBox;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "CreatedByUserId";
+            column.Caption = "Created By";
+            column.ColumnType = MVCxGridViewColumnType.ComboBox;
+            column.Visible = true;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            var comboBoxProperties = column.PropertiesEdit as ComboBoxProperties;
+            comboBoxProperties.DataSource = new UserLogic().GetAll();
+            comboBoxProperties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+            comboBoxProperties.TextField = "UserCaption";
+            comboBoxProperties.ValueField = "Id";
+            comboBoxProperties.ValueType = typeof(int);
+
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "CreatedByDateTime";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "Created Date";
+            column.Visible = true;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(99);
+            column.PropertiesEdit.DisplayFormatString = "dd MMM yyyy";
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.Caption = "Locked";
+            column.SetDataItemTemplateContent(c =>
+            {
+
+                var isLocked = (bool)DataBinder.Eval(c.DataItem, "IsLocked");
+
+                Html.DevExpress().Image(reptImage =>
+                {
+                    reptImage.Name = "image_dashboard" + DataBinder.Eval(c.DataItem, "Id");
+                    reptImage.ImageUrl = isLocked ? "~/Content/Images/Grid/Lock.png" : "~/Content/Images/Grid/open_lock.png";
+                }).GetHtml();
+
+            });
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(100);
+        });
+
+
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "ModifiedByDateTime";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "Modified Date";
+            column.Visible = false;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(99);
+            column.PropertiesEdit.DisplayFormatString = "dd MMM yyyy";
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "ModifiedByUserId";
+            column.Caption = "Modified By";
+            column.ColumnType = MVCxGridViewColumnType.ComboBox;
+            column.Visible = false;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            var comboBoxProperties = column.PropertiesEdit as ComboBoxProperties;
+            comboBoxProperties.DataSource = new UserLogic().GetAll();
+            comboBoxProperties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+            comboBoxProperties.TextField = "UserCaption";
+            comboBoxProperties.ValueField = "Id";
+            comboBoxProperties.ValueType = typeof(int);
+
+            column.SetColVisibleIndex(99);
+        });
+
+        settings.InitNewRow = (s, e) =>
+        {
+            e.NewValues["IsActive"] = true;
+
+        };
+
+        if (ViewData["GridException"] != null)
+        {
+            settings.SetFooterRowTemplateContent(c =>
+            {
+                Html.ViewContext.Writer.Write(ViewData["GridException"]);
+            });
+        }
+
+        settings.BeforeGetCallbackResult = (s, e) =>
+        {
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)s;
+                gridView.Settings.ShowFooter = true;
+            }
+        };
+
+        settings.PreRender = (sender, e) =>
+        {
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)sender;
+                gridView.Settings.ShowFooter = true;
+            }
+
+        };
+
+        ReportSettings.GridViewFeaturesHelper.GenericSettings(settings);
+
+    });
+
+
+    if (ViewData["GridException"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GridException"]);
+    }
+    }
+    @grid.Bind(Model).GetHtml()
+<script type="text/javascript">
+
+    function ReloadDashboardGrid()
+    {
+        DashboardGridView.PerformCallback();
+    }
+
+    function ShowDashboardRolePopup(_Id)
+    {
+
+         $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheDashboardEdited", "DashboardSetup")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                    DashboardRoleAddEditPopup.Show();
+                    DashboardGridView.PerformCallback();
+                }
+            });
+
+    }
+</script>

@@ -1,0 +1,70 @@
+@using BusinessLogic.Logic;
+@using Reports.Controllers.Cache;
+@using CommonDLL.Helper;
+ 
+<style>
+    .noBorder {
+        border: none !important;
+        box-shadow: none !important;
+       
+    }
+</style>
+
+<div style="padding: 5px; display: flex; justify-content: space-between;">
+
+    @Html.DevExpress().Menu(_menuSettings =>
+{
+    _menuSettings.Name = "headerMenu";
+    _menuSettings.ControlStyle.CssClass = "";
+    _menuSettings.ControlStyle.BackColor = System.Drawing.Color.Transparent;
+    _menuSettings.SettingsAdaptivity.Enabled = false;
+    _menuSettings.SettingsAdaptivity.EnableCollapseToSideMenu = false;
+    _menuSettings.SettingsAdaptivity.EnableCollapseRootItemsToIcons = false;
+    _menuSettings.SettingsAdaptivity.CollapseRootItemsToIconsAtWindowInnerWidth = 900;
+    _menuSettings.ControlStyle.CssClass = "mainMenu noBorder";
+    _menuSettings.EnableTheming = true;
+    _menuSettings.AutoSeparators = AutoSeparatorMode.None;
+
+    _menuSettings.Items.Add(menuItemSettings =>
+    {
+        menuItemSettings.Text = "Yebo Reports Sofware";
+        menuItemSettings.NavigateUrl = "/";
+        menuItemSettings.ItemStyle.CssClass = "noBorder";
+        menuItemSettings.Image.Url = "~/Content/Images/Menu/Home.png";
+        
+    });
+
+
+
+}).GetHtml()
+
+
+@Html.DevExpress().Menu(_menuSettings =>
+{
+    _menuSettings.Name = "headerMenulogout";
+    _menuSettings.ControlStyle.CssClass = "mainMenu";
+    _menuSettings.ControlStyle.BackColor = System.Drawing.Color.Transparent;
+    _menuSettings.SettingsAdaptivity.Enabled = true;
+    _menuSettings.SettingsAdaptivity.EnableCollapseRootItemsToIcons = true;
+    _menuSettings.SettingsAdaptivity.EnableCollapseToSideMenu = false;
+    _menuSettings.SettingsAdaptivity.CollapseRootItemsToIconsAtWindowInnerWidth = 850;
+    _menuSettings.ControlStyle.CssClass = "mainMenu noBorder";
+    _menuSettings.Items.Add(menuItemSettings =>
+    {
+        menuItemSettings.Text = "Scale";
+        menuItemSettings.NavigateUrl = "/ScaleSettings";
+        menuItemSettings.Image.Url = "~/Content/Images/Magnifying-glass.png";
+    });
+    _menuSettings.Items.Add(menuItemSettings =>
+    {
+        menuItemSettings.Text = "Logout";
+        menuItemSettings.NavigateUrl = "/Login/Logout";
+        menuItemSettings.Image.Url = "~/Content/Images/logout.png";
+    });
+
+
+}).GetHtml()
+
+</div>
+
+ 

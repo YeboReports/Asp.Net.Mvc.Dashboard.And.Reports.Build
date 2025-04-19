@@ -1,0 +1,20 @@
+@model IEnumerable<MVCxNavBarGroup>
+<div class="leftPanel">
+
+    @Html.DevExpress().NavBar(settings =>
+        {
+            settings.Name = "LeftNavBar";
+            settings.AutoCollapse = true;
+            settings.EnableAnimation = true;
+            settings.Width = Unit.Percentage(90);
+            settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
+            settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
+            settings.SaveStateToCookies = true;
+            settings.AllowSelectItem = true;
+            settings.EnableHotTrack = true;
+            settings.Groups.AddRange(Model);
+            settings.ClientSideEvents.ItemClick = "function(s, e) { CallbackPanel.PerformCallback(); }";
+        }).GetHtml()
+
+</div>
+

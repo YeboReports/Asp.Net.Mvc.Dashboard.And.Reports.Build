@@ -1,0 +1,28 @@
+<div class="copyright">
+    <table style="width: 100%; position: center;">
+        <tr style="display:none">
+
+            <td>
+
+                <table>
+                    <tr> <td> Skype:    </td> <td> live:.cid.bfab8ee08918fa42  </td> </tr>
+                    <tr> <td> Email:    </td> <td> yeboreports@gmail.com        </td> </tr>
+                    <tr> <td> Whatsapp: </td> <td> +27 66 045 3246              </td> </tr>
+                    <tr> <td> Youtube:  </td> <td>                              </td> </tr>
+                </table>
+
+            </td>
+ 
+        </tr>
+        <tr style="">
+ 
+            <td style="text-align: center; padding: 10px;">
+                @Html.DevExpress().Label(settings =>
+                {
+                settings.EncodeHtml = false;
+                settings.Text = "Yebo Reports Sofware " + DateTime.Now.Year + " &copy; Copyright";
+                }).GetHtml()
+            </td>
+        </tr>
+    </table>
+</div>  

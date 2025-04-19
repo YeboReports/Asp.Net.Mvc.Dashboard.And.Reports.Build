@@ -1,0 +1,17 @@
+﻿@using CommonDLL.DTO
+@{
+    ViewBag.Title = "VerticalReportData";
+    Layout = "~/Views/Shared/_mainLayout.cshtml";
+}
+
+<div class="divTop">
+    Vertical Report Data
+</div>
+
+@Html.Action("VerticalReportDataTopViewPartial", "VerticalReportData")
+@using (Html.BeginForm())
+{
+    @Html.Action("VerticalReportDataGridViewPartial", "VerticalReportData")
+}
+
+ 

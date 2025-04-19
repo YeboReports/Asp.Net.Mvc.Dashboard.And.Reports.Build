@@ -1,0 +1,321 @@
+﻿@using CommonDLL.DTO;
+@using CommonDLL.Helper;
+@using System.Drawing;
+@using BusinessLogic.Logic;
+@using Reports.Controllers.Cache
+@model CommonDLL.DTO.DataHeaderDTO
+
+<div class="nice_padding report_header_table_cover">
+    <form id="SendSearchData">
+        <table>
+            <tr>
+                <td>
+                    @foreach (var param in Model.ReportParameters)
+                    {
+                        var cache = new CacheProvider();
+                        var defaultvalue = (cache.GetObjectByKey(param.Name).Value);
+                        var name = StringHelper.SplitByCase(param.Name.TrimStart('@'));
+
+                        if (param.DataType == "int" || param.DataType == "numeric" || param.DataType == "tinyint" || param.DataType == "smallint")
+                        {
+
+                            <div class='inline-block'>
+
+                                @Html.DevExpress().Label(settings =>
+                           {
+                               settings.Text = name;
+                               settings.ClientEnabled = true;
+                           }).GetHtml()
+
+                                @if (string.IsNullOrEmpty(param.StoredProcedure))
+                                {
+
+                                    @Html.DevExpress().SpinEdit(settings =>
+                               {
+                                   settings.Name = param.Name;
+                                   settings.ClientVisible = true;
+                                   settings.ClientEnabled = true;
+                                   settings.Properties.NumberType = SpinEditNumberType.Integer;
+                                   settings.Number = defaultvalue != null ? int.Parse(defaultvalue) : settings.Number;
+                               }).GetHtml()
+
+                                }
+                                else
+                                {
+
+                                    @Html.Action("ReportParameterDropDownPartial", "ReportData", new { ParameterName = param.Name, Value = param.Value, StoredProcedure = param.StoredProcedure, Type = param.DataType })
+
+                                }
+
+
+                            </div>
+
+
+                        }
+                        else if (param.DataType == "decimal" || param.DataType == "smallmoney" || param.DataType == "money" || param.DataType == "float" || param.DataType == "real")
+                        {
+
+                            <div class='inline-block'>
+
+                                @Html.DevExpress().Label(settings =>
+                                {
+                                       settings.Text = name;
+                                       settings.ClientEnabled = true;
+                                }).GetHtml()
+
+                                @if (string.IsNullOrEmpty(param.StoredProcedure))
+                                {
+
+                                    @Html.DevExpress().SpinEdit(settings =>
+                               {
+                                   settings.Name = param.Name;
+                                   settings.ClientVisible = true;
+                                   settings.ClientEnabled = true;
+                                   settings.Properties.NumberType = SpinEditNumberType.Float;
+                                   settings.Number = defaultvalue != null ? decimal.Parse(defaultvalue) : settings.Number;
+                               }).GetHtml()
+
+                                }
+                                else
+                                {
+
+                                    @Html.Action("ReportParameterDropDownPartial", "ReportData", new { ParameterName = param.Name, Value = param.Value, StoredProcedure = param.StoredProcedure, Type = param.DataType })
+
+                                }
+
+
+                            </div>
+
+
+                        }
+                        else if (param.DataType == "date" || param.DataType == "datetime2" || param.DataType == "smalldatetime")
+                        {
+
+                            <div class='inline-block'>
+
+                                @Html.DevExpress().Label(settings =>
+                                   {
+                                       settings.Text = name;
+                                       settings.ClientEnabled = true;
+                                   }).GetHtml()
+
+
+                                @Html.DevExpress().DateEdit(settings =>
+                               {
+                                   settings.Name = param.Name;
+                                   settings.ClientVisible = true;
+                                   settings.ClientEnabled = true;
+                                   settings.Date = defaultvalue != null ? DateTime.Parse(defaultvalue) : settings.Date;
+                                   settings.Properties.EditFormatString = "dd MMMM yyyy";
+                               }).GetHtml()
+
+                            </div>
+
+                        }
+                        else if (param.DataType == "datetime")
+                        {
+
+                            <div class='inline-block'>
+                                @Html.DevExpress().Label(settings =>
+                           {
+                               settings.Text = name;
+                               settings.ClientEnabled = true;
+                           }).GetHtml()
+
+                                @Html.DevExpress().DateEdit(settings =>
+                           {
+                               settings.Name = param.Name;
+                               settings.ClientVisible = true;
+                               settings.ClientEnabled = true;
+                               settings.Date = defaultvalue != null ? DateTime.Parse(defaultvalue) : settings.Date;
+                               settings.Properties.EditFormatString = "dd MMMM yyyy HH:MM";
+                           }).GetHtml()
+
+                            </div>
+
+                        }
+                        else if (param.DataType == "nvarchar" || param.DataType == "varchar" || param.DataType == "nchar" || param.DataType == "char" || param.DataType == "guid" || param.DataType == "uniqueidentifier")
+                        {
+
+                            <div class='inline-block'>
+                                @Html.DevExpress().Label(settings =>
+                                {
+                                   settings.Text = name;
+                                   settings.ClientEnabled = true;
+                                }).GetHtml()
+
+
+                                @if (string.IsNullOrEmpty(param.StoredProcedure))
+                                {
+
+                                    @Html.DevExpress().TextBox(settings =>
+                                    {
+                                        settings.Name = param.Name;
+                                        settings.ClientVisible = true;
+                                        settings.ClientEnabled = true;
+                                        settings.Text = defaultvalue != null ? defaultvalue.Trim('\'') : defaultvalue;
+                                    }).GetHtml()
+                                }
+                                else
+                                {
+
+                                    @Html.Action("ReportParameterDropDownPartial", "ReportData", new { ParameterName = param.Name, Value = param.Value, StoredProcedure = param.StoredProcedure, Type = param.DataType })
+
+                                }
+
+
+                            </div>
+
+                        }
+                        else if (param.DataType == "text" || param.DataType == "ntext")
+                        {
+
+                            <div class='inline-block'>
+
+                                @Html.DevExpress().Label(settings =>
+                                {
+                                   settings.Text = name;
+                                   settings.ClientEnabled = true;
+                                }).GetHtml()
+
+                                @Html.DevExpress().Memo(settings =>
+                                {
+                                    settings.Name = param.Name;
+                                    settings.ClientVisible = true;
+                                    settings.ClientEnabled = true;
+                                    settings.Text = defaultvalue != null ? defaultvalue.Trim('\'') : defaultvalue;
+                                }).GetHtml()
+
+                            </div>
+
+                        }
+                        else if (param.DataType == "bit")
+                        {
+
+                            <div class='inline-block'>
+
+                                @Html.DevExpress().Label(settings =>
+                                {
+                                   settings.Text = name;
+                                   settings.ClientEnabled = true;
+                                }).GetHtml()
+
+                                @Html.DevExpress().CheckBox(settings =>
+                                {
+                                    settings.Name = param.Name;
+                                    settings.ClientVisible = true;
+                                    settings.ClientEnabled = true;
+                                    settings.Checked = defaultvalue != null ? Boolean.Parse(defaultvalue)  : settings.Checked;
+                                    settings.Text = "  ";
+                                }).GetHtml()
+
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class='inline-block'>
+
+                                @Html.DevExpress().Label(settings =>
+                                {
+                                    settings.Text = param.Name;
+                                    settings.ClientEnabled = true;
+                                }).GetHtml()
+
+                            </div>
+
+                        }
+
+                    }
+                </td>
+
+                <td valign="bottom" style="padding-left:3px;">
+
+                    @if (Model.ReportParameters != null && Model.ReportParameters.Count() >= 1)
+                    {
+
+                        @Html.DevExpress().Button(settings =>
+                   {
+                       settings.Name = "btnSearchData";
+                       settings.Text = "Search";
+                       settings.ClientEnabled = true;
+                       settings.UseSubmitBehavior = false;
+                       settings.ClientSideEvents.Click = "function(s,e){ SubmitSearchData(s,e); }";
+                   }).GetHtml()
+                    }
+                    else
+                    {
+                        <div class='inline-block'>
+
+                            @Html.DevExpress().Label(settings =>
+                            {
+                                settings.Text =  "No search parameters";
+                                settings.ClientEnabled = true;
+                            }).GetHtml()
+
+                        </div>
+                    }
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<script type="text/javascript">
+
+    function OnValidation(s, e)
+    {
+        if (s.GetText() == "")
+        {
+            e.isValid = false;
+        }
+    }
+
+    function SubmitSearchData(s,e)
+    {
+       // LoadingPanel.Show();
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", '@Url.Action("UpdateSearchCache", "ReportData")');
+        xhr.onload = function (event)
+        {
+               //LoadingPanel.Hide();
+            var result = JSON.parse(event.target.response);
+            if (result.Success)
+            {
+                ReportDataGridView.PerformCallback();
+            // load data
+
+            } else
+            {
+                lblCommonMessage.SetText(result.errMsg);
+                SharedMessageBox.Show();
+
+            // we may fail here
+            }
+
+        };
+        var formData = new FormData(document.getElementById("SendSearchData"));
+        xhr.send(formData);
+
+    }
+
+    function ShowPopupSubReportData(parentId)
+    {
+        var reportId = '@Request.QueryString["Id"]';
+        SubReportDataPanel.PerformCallback({ ParentId : parentId, ReportId: reportId });
+        ReportDataSubReportPopup.Show();
+
+    }
+
+    function ShowPopupReportDocumentData(recordId, documentId)
+    {
+        //console.log(recordId);
+        var reportId = '@Request.QueryString["Id"]';
+        ReportDocumentDataPanel.PerformCallback({ RecordId: recordId, ReportDocumentId: documentId });
+        ReportDataReportDocumentPopup.Show();
+    }
+
+    
+
+</script>
+

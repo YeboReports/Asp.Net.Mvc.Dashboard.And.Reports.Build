@@ -1,0 +1,15 @@
+﻿@model CommonDLL.DTO.UserDTO
+<fieldset>
+    <table cellpadding="4" cellspacing="4">
+        @{
+            var passwordchanged = Model.LastPasswordModifiedByDateTime != null ? Model.LastPasswordModifiedByDateTime.Value.ToString("dd MMM yyyy HH:mm:ss") : "";
+        }  
+        <tr>    <td> Email </td>   <td> &nbsp; </td>   <td>  @Model.Email </td>    </tr>
+        <tr>    <td> First Name </td>   <td> &nbsp; </td>   <td>  @Model.FirstName</td>     </tr>
+        <tr>    <td> Last Name </td>     <td> &nbsp; </td> <td>  @Model.LastName </td>    </tr>
+        <tr>    <td> Caption </td>    <td> &nbsp; </td>  <td> @Model.UserCaption </td>      </tr>
+        <tr>    <td> Created By Date</td>   <td> &nbsp;  &nbsp; &nbsp; &nbsp; </td>     <td> @Model.CreatedByDateTime.ToString("dd MMM yyyy HH:mm:ss")</td>      </tr>
+        <tr>    <td> Last Password Change Date</td>   <td> &nbsp;  &nbsp; &nbsp; &nbsp; </td>     <td> @passwordchanged </td>      </tr>
+    </table>
+    </fieldset>
+

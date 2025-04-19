@@ -1,0 +1,91 @@
+﻿@using CommonDLL.DTO
+@{
+    ViewBag.Title = "VerticalReport";
+    Layout = "~/Views/Shared/_mainLayout.cshtml";
+}
+
+<div class="divTop">
+   VerticalReport Setup
+</div>
+
+@Html.Action("VerticalReportTopViewPartial", "VerticalReportSetup")
+@using (Html.BeginForm())
+{
+    @Html.Action("VerticalReportGridViewPartial", "VerticalReportSetup")
+}
+
+
+@Html.DevExpress().PopupControl(settings =>
+{
+
+    settings.Styles.Header.Font.Size = 10;
+//    settings.Style.Add("font-size", "7pt");
+    settings.Name = "MessageBoxVerticalReport";
+    settings.Style.Add("Color", "Gray");
+    settings.Style.Add("border-color", "Gray");
+    settings.Style.Add("border-width", "2px");
+    settings.AllowDragging = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.Height = Unit.Percentage(100);
+    settings.Width = Unit.Pixel(600);
+    settings.PopupAnimationType = AnimationType.None;
+    settings.Modal = true;
+    settings.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+    settings.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+   // settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.OnWindowInnerWidth;
+   // settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+    settings.SetContent(() => Html.RenderPartial("_VerticalReportMessageBox", null));
+}).GetHtml()
+
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.HeaderText = "VerticalReport Roles";
+    settings.Styles.Header.Font.Size = 10;
+   // settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.OnWindowInnerWidth;
+   // settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+//    settings.Style.Add("font-size", "7pt");
+    settings.Name = "VerticalReportRoleEditPopup";
+    settings.Style.Add("Color", "Gray");
+    settings.Style.Add("border-color", "Gray");
+    settings.Style.Add("border-width", "2px");
+    settings.AllowDragging = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.Height = Unit.Percentage(100);
+    settings.Width = Unit.Pixel(600);
+    settings.PopupAnimationType = AnimationType.None;
+    settings.Modal = true;
+    settings.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+    settings.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+    settings.ClientSideEvents.CloseButtonClick = "function(s, e) {ReloadVerticalReportGrid(); }";
+    settings.SetContent(() => Html.RenderPartial("_VerticalReportRoleViewPartialPopup", null));
+}).GetHtml()
+ 
+
+
+ 
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.HeaderText = "VerticalReport Setup";
+    settings.Styles.Header.Font.Size = 10;
+   // settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.OnWindowInnerWidth;
+   // settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+   // settings.Style.Add("font-size", "7pt");
+    settings.Name = "VerticalReportSetupPopup";
+    settings.Style.Add("Color", "Gray");
+    settings.Style.Add("border-color", "Gray");
+    settings.Style.Add("border-width", "2px");
+    settings.AllowDragging = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.Height = Unit.Percentage(50);
+    settings.Width = Unit.Pixel(600);
+    settings.PopupAnimationType = AnimationType.None;
+    settings.Modal = true;
+    settings.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+    settings.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+    settings.ClientSideEvents.CloseButtonClick = "function(s, e) {ReloadVerticalReportGrid(); }";
+    settings.SetContent(() => Html.RenderPartial("_VerticalReportSetupSettings", null));
+}).GetHtml() 
+ 
+

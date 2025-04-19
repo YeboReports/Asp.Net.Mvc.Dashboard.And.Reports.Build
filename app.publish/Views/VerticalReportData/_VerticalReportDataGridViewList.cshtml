@@ -1,0 +1,55 @@
+﻿@using System.Drawing
+@using System.Web.UI.WebControls
+@using BusinessLogic.Logic;
+@using CommonDLL.DTO
+@using CommonDLL.Helper;
+@using ReportSettings;
+@using Reports.Controllers.Cache;
+@model VerticalReportDataDTO
+
+@{
+
+    var grid = Html.DevExpress().VerticalGrid(settings =>
+    {
+
+        settings.Name = "ReportDataGridView";
+
+        settings.CallbackRouteValues = new { Controller = "VerticalReportData", Action = "VerticalReportDataGridViewPartial" };
+
+
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+
+        settings.Height = System.Web.UI.WebControls.Unit.Percentage(30);
+        settings.Styles.Header.CssClass = "grid-header";
+        settings.SettingsSearchPanel.Visible = false;;
+
+        settings.BeforeGetCallbackResult += (s, e) =>
+        {
+
+
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)s;
+                gridView.Settings.ShowFooter = true;
+            }
+
+        };
+
+
+
+     
+
+
+        ReportSettings.GridViewFeaturesHelper.SetupGlobalVerticalReportGrid(settings, Model);
+
+    });
+
+
+    if (ViewData["GridException"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GridException"]);
+    }
+
+}
+@grid.Bind(Model.DataSource).GetHtml()

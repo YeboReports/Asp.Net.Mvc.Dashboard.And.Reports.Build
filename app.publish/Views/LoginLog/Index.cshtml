@@ -1,0 +1,28 @@
+﻿<div class="divTop">
+    Login Log
+</div>
+<script type="text/javascript">
+    function DeleteAllLogins()
+    {
+
+         $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeleteAll", "LoginLog")',
+                data:
+                {
+                },
+                success: function (response)
+                {
+
+
+                    LoginLogGridView.PerformCallback();
+                }
+            });
+
+    }
+</script>
+@using (Html.BeginForm())
+{
+    @Html.Action("LoginLogGridPartialView", "LoginLog")
+}
+

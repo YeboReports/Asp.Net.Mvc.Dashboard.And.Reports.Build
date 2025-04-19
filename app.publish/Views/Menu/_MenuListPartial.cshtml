@@ -1,0 +1,54 @@
+﻿@model List<CommonDLL.DTO.SubMenuDTO>
+ 
+@Html.DevExpress().NavBar(
+    settings =>
+    {
+        settings.Name = "nbFeatures";
+        settings.AllowExpanding = true;
+        settings.AllowSelectItem = true;
+        settings.AutoCollapse = true;
+        settings.EnableHotTrack = true;
+        settings.EnableAnimation = true;
+        settings.SaveStateToCookies = true;
+        settings.Width = Unit.Parse("100%");
+
+        var groups = Model.GroupBy(x => x.MenuGroup);
+        foreach (var g in groups)
+        {
+
+            settings.Groups.Add(group =>
+            {
+
+                group.Text = g.Key;
+                group.HeaderImage.Url = g.FirstOrDefault().ImageUrl;
+                var menu = Model.Where(x => x.MenuGroup == g.Key).OrderBy(x => x.LinkName);
+                foreach (var _menu in menu)
+                {
+
+                    var name = new MVCxNavBarItem()
+                    {
+                        Text = _menu.LinkName,
+                        NavigateUrl = _menu.Link,
+                        Name = _menu.LinkName
+                    };
+
+                    group.Items.Add(name);
+
+                }
+
+            });
+        }
+
+    }).GetHtml()
+
+@{
+
+    if (ViewData["GridException"] != null)
+    {
+
+     <div>    @ViewData["GridException"] </div>
+
+
+    }
+
+}

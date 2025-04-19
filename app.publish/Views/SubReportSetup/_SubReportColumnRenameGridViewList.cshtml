@@ -1,0 +1,133 @@
+﻿@using System.Drawing
+@using System.Web.UI.WebControls
+@using BusinessLogic.Logic;
+@using CommonDLL.DTO
+@using Reports.Controllers.Cache;
+@using CommonDLL.Object;
+
+@{
+    var cache = new CacheProvider();
+    var subReportId = cache.GetObjectByKeyAsInt(CacheVariable.CachedEditedSubReport);
+
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "ColumnRenameGridViewList";
+
+        settings.CallbackRouteValues = new { Controller = "SubReportSetup", Action = "ColumnRenameGridViewList" };
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "SubReportSetup", Action = "ColumnRenameAdd" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "SubReportSetup", Action = "ColumnRenameDelete" };
+
+        settings.SettingsSearchPanel.Visible = false;
+        settings.Styles.SearchPanel.CssClass = "search-panel-right";
+
+        settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
+        settings.SettingsPopup.EditForm.HorizontalAlign = PopupHorizontalAlign.WindowCenter;
+        settings.SettingsPopup.EditForm.VerticalAlign = PopupVerticalAlign.WindowCenter;
+        settings.SettingsPopup.EditForm.Modal = true;
+        settings.SettingsPopup.EditForm.Width = System.Web.UI.WebControls.Unit.Pixel(500);
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsText.PopupEditFormCaption = "";
+        settings.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+        settings.SettingsEditing.EditFormColumnCount = 1;
+        settings.Height = System.Web.UI.WebControls.Unit.Percentage(30);
+        settings.Styles.Header.CssClass = "grid-header";
+
+        settings.KeyFieldName = "Id";
+
+        settings.SettingsCommandButton.NewButton.Image.IconID = "actions_add_16x16office2013";
+        settings.SettingsCommandButton.NewButton.RenderMode = GridCommandButtonRenderMode.Image;
+        settings.SettingsCommandButton.EditButton.Image.IconID = "actions_edit_16x16devav";
+        settings.SettingsCommandButton.EditButton.RenderMode = GridCommandButtonRenderMode.Image;
+        settings.SettingsCommandButton.DeleteButton.Image.IconID = "actions_cancel_16x16office2013";
+        settings.SettingsCommandButton.DeleteButton.RenderMode = GridCommandButtonRenderMode.Image;
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.ShowNewButtonInHeader = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowEditButton = false;
+        settings.CommandColumn.Width = System.Web.UI.WebControls.Unit.Percentage(2);
+
+        settings.Settings.ShowFilterRow = false;
+        settings.Settings.ShowGroupPanel = false;
+
+        settings.Styles.CommandColumn.Spacing = new Unit(10);
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+
+        settings.SettingsPager.Visible = false;
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.SettingsPager.FirstPageButton.Visible = false;
+        settings.SettingsPager.LastPageButton.Visible = false;
+        settings.SettingsPager.PageSizeItemSettings.Visible = false;
+        settings.SettingsPager.PageSizeItemSettings.Items = new[] { "5", "10", "20", "50", "100" };
+        settings.SettingsPager.PageSizeItemSettings.ShowAllItem = true;
+        settings.SettingsPager.PageSize = 100;
+
+        settings.Styles.CommandColumn.Spacing = new Unit(10);
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Column";
+            column.Caption = "Column";
+            column.ColumnType = MVCxGridViewColumnType.ComboBox;
+            column.Visible = true;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            var comboBoxProperties = column.PropertiesEdit as ComboBoxProperties;
+            comboBoxProperties.DataSource = new SubReportColumnRenameLogic().GetDropDownlistByReportId(subReportId);
+            comboBoxProperties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+            comboBoxProperties.TextField = "Column";
+            comboBoxProperties.ValueField = "Column";
+            comboBoxProperties.ValueType = typeof(string);
+            column.SetColVisibleIndex(1);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "RenamedTo";
+            column.Caption = "RenamedTo";
+            column.ColumnType = MVCxGridViewColumnType.Default;
+            column.Visible = true;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            column.SetColVisibleIndex(1);
+        });
+
+
+        if (ViewData["GridException"] != null)
+        {
+            settings.SetFooterRowTemplateContent(c =>
+            {
+                Html.ViewContext.Writer.Write(ViewData["GridException"]);
+            });
+        }
+
+        settings.BeforeGetCallbackResult = (s, e) =>
+        {
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)s;
+                gridView.Settings.ShowFooter = true;
+            }
+        };
+
+        settings.PreRender = (sender, e) =>
+        {
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)sender;
+                gridView.Settings.ShowFooter = true;
+            }
+
+        };
+
+    });
+
+
+    if (ViewData["GridException"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GridException"]);
+    }
+}
+@grid.Bind(Model).GetHtml()

@@ -1,0 +1,14 @@
+﻿@Html.DevExpress().ComboBox(settings =>
+{
+    settings.Name = "RoleDDL";
+    settings.CallbackRouteValues = new { Controller = "RoleSetup", Action = "RoleDDLPartialView" };
+    settings.Properties.DropDownStyle = DropDownStyle.DropDownList;
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+    settings.Properties.AllowUserInput = true;
+    settings.Properties.AllowMouseWheel = true;
+    settings.Properties.TextField = "Name";
+    settings.Properties.ValueField = "Id";
+    settings.Properties.ValueType = typeof(int);
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "function(s, e) { CacheChangeRoleId(); }";
+}).BindList(Model).GetHtml()

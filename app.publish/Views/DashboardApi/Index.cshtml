@@ -1,0 +1,20 @@
+﻿@using Stimulsoft.Report.Mvc;
+
+@{
+    ViewBag.Title = "Api Layout";
+    Layout = "~/Views/Shared/_ApiLayout.cshtml";
+}
+
+
+@Html.Stimulsoft().StiMvcViewer("DashboardView1", new StiMvcViewerOptions()
+{
+Toolbar =
+{
+   ShowOpenButton = false
+},
+Actions =
+          {
+                   GetReport = "GetReport",
+                   ViewerEvent = "ViewerEvent",
+         }
+})

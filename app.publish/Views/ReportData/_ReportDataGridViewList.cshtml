@@ -1,0 +1,249 @@
+﻿@using System.Drawing
+@using System.Web.UI.WebControls
+@using BusinessLogic.Logic;
+@using CommonDLL.DTO
+@using CommonDLL.Helper;
+@using ReportSettings;
+@using Reports.Controllers.Cache;
+@using CommonDLL.Object
+@model ReportDataDTO
+
+@{
+    var cache = new CacheProvider();
+    var reportId = cache.GetObjectByKeyAsInt(CacheVariable.CacheReportId);
+
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+
+        settings.Name = "ReportDataGridView";
+
+        settings.CallbackRouteValues = new { Controller = "ReportData", Action = "ReportDataGridViewPartial" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "ReportData", Action = "ReportDataUpdate" };
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "ReportData", Action = "ReportDataAdd" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "ReportData", Action = "ReportDataDelete" };
+        settings.SettingsCustomizationDialog.Enabled = true;
+        settings.SettingsBehavior.EnableCustomizationWindow = true;
+        settings.Settings.ShowFilterRowMenu = true;
+        settings.SettingsSearchPanel.Visible = false;
+
+        settings.SettingsPopup.EditForm.Width = System.Web.UI.WebControls.Unit.Pixel(500);
+        settings.CommandColumn.Width = System.Web.UI.WebControls.Unit.Percentage(2);
+        settings.Styles.CommandColumn.Spacing = new Unit(10);
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsText.ConfirmDelete = "Are you sure you want to delete this?";
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+        settings.SettingsEditing.EditFormColumnCount = 1;
+        settings.Height = System.Web.UI.WebControls.Unit.Percentage(30);
+        settings.Styles.Header.CssClass = "grid-header";
+
+        // settings.Settings.VerticalScrollBarMode = ScrollBarMode.Hidden;
+        //  settings.Settings.VerticalScrollableHeight = 102;
+        //  settings.Settings.VerticalScrollBarStyle = GridViewVerticalScrollBarStyle.Virtual;
+
+        settings.HtmlRowPrepared = (s, e) =>
+        {
+            if (e.RowType != GridViewRowType.Data) return;
+
+            string backGroundColor = e.GetValue("RowColor").ToString();
+            if (backGroundColor != null)
+            {
+                e.Row.BackColor = System.Drawing.Color.FromName(backGroundColor);
+            }
+
+            string color = e.GetValue("Color").ToString();
+            if (color != null)
+            {
+                e.Row.ForeColor = System.Drawing.Color.FromName(color);
+            }
+
+            string borderColor = e.GetValue("BorderColor").ToString();
+            if (borderColor != null)
+            {
+                e.Row.BorderColor = System.Drawing.Color.FromName(borderColor);
+            }
+
+            string font = e.GetValue("Font").ToString();
+            if (font != null && font == "Bold")
+            {
+                e.Row.Font.Bold = true;
+            }
+
+        };
+
+        settings.InitNewRow = (s, e) =>
+        {
+            foreach (var para in Model.AddParameters)
+            {
+                var p = para.Name.TrimStart('@');
+                var defaultValue = para.Default.Trim('\'');
+                if (defaultValue != "null" && defaultValue != "")
+                {
+
+                    e.NewValues[p] = CommonDLL.Helper.DefaultValues.GetValueOrDefaultByType(defaultValue, para.Type);
+
+                }
+            }
+
+        };
+
+
+        settings.AfterPerformCallback += (s, e) =>
+        {
+            MVCxGridView _grid = (MVCxGridView)s;
+            var renamed = new ReportColumnRenameLogic().GetByReportId(reportId);
+            foreach (var name in renamed)
+            {
+                if (_grid.Columns[name.Column] != null)
+                {
+                    _grid.Columns[name.Column].Caption = name.RenamedTo;
+                }
+            }
+
+        };
+
+
+        settings.BeforeGetCallbackResult += (s, e) =>
+        {
+            MVCxGridView _grid = (MVCxGridView)s;
+            if (!_grid.IsNewRowEditing && _grid.IsEditing)
+            {
+                if (Model.EditParameters != null)
+                {
+                    foreach (var para in Model.EditParameters)
+                    {
+                        var p = para.Name.TrimStart('@');
+                        if (_grid.DataColumns[p] != null && p.ToLower() != "id")
+                        {
+                            _grid.DataColumns[p].EditFormSettings.Visible = DefaultBoolean.True;
+
+                        }
+                    }
+                }
+            }
+
+            if (_grid.IsNewRowEditing && _grid.IsEditing)
+            {
+                if (Model.AddParameters != null)
+                {
+                    foreach (var para in Model.AddParameters)
+                    {
+                        var p = para.Name.TrimStart('@');
+                        if (_grid.DataColumns[p] != null)
+                        {
+                            _grid.DataColumns[p].EditFormSettings.Visible = DefaultBoolean.True;
+                        }
+                    }
+                }
+
+            }
+
+
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)s;
+                gridView.Settings.ShowFooter = true;
+            }
+
+        };
+        if (Model.HasSubReports >= 1 && BoolHelper.GetBoolValueOrDefault(Model.Report.ShowSubReportAsPopup))
+        {
+            settings.Columns.Add(column =>
+            {
+                column.ColumnType = MVCxGridViewColumnType.Image;
+                column.Width = Unit.Percentage(2);
+                column.Caption = "SubReport";
+                column.Visible = true;
+                column.SetDataItemTemplateContent(c => Html.DevExpress().Image(image =>
+                {
+                    image.Name = string.Format("ReportUniqueRow_{0}", c.VisibleIndex);
+                    image.ImageUrl = "~/Content/Images/Menu/Open-book.png";
+                    image.Style.Add("cursor", "pointer");
+                    image.Style.Add("padding-top", "7px");
+                    image.Properties.ClientSideEvents.Click = "function(s, e) { ShowPopupSubReportData(" + c.KeyValue.ToString() + "); }";
+                    image.ToolTip = "View Data";
+                }).Render());
+                column.EditFormSettings.Visible = DefaultBoolean.False;
+                column.SetColVisibleIndex(0);
+            });
+
+        } else  if (Model.HasSubReports >= 1)
+        {
+
+            settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
+            settings.SettingsDetail.ShowDetailRow = true;
+
+            settings.SetDetailRowTemplateContent(c =>
+            {
+
+                Html.RenderAction("SubReportDataPartial", "SubReportData", new { ReportId = Model.Report.Id, ParentId = DataBinder.Eval(c.DataItem, "Id") });
+
+            });
+        }
+
+          foreach (var document in Model.ReportDocuments)
+        {
+
+            settings.Columns.Add(column =>
+            {
+                column.ColumnType = MVCxGridViewColumnType.Image;
+                column.Caption = document.Name;
+                column.Width = Unit.Percentage(2);
+                column.Visible = true;
+                column.SetDataItemTemplateContent(c => Html.DevExpress().Image(image =>
+                {
+                    image.Name = string.Format("ReportDocumentRow_{0}_{1}", c.VisibleIndex, document.Id);
+                    image.ImageUrl = "~/Content/Images/PDF.png";
+                    image.Style.Add("cursor", "pointer");
+                    image.Style.Add("padding-top", "7px");
+                    image.Properties.ClientSideEvents.Click = "function(s, e) { ShowPopupReportDocumentData(" + c.KeyValue.ToString() + ", "+ document.Id + "); }";
+                    image.ToolTip = document.Name;
+                }).Render());
+                column.EditFormSettings.Visible = DefaultBoolean.False;
+                column.SetColVisibleIndex(1);
+            });
+
+        }
+
+        if (ViewData["GridException"] != null)
+        {
+            settings.SetFooterRowTemplateContent(c =>
+            {
+                Html.ViewContext.Writer.Write(ViewData["GridException"]);
+            });
+        }
+
+
+        settings.PreRender = (sender, e) =>
+        {
+            MVCxGridView gridView = (MVCxGridView)sender;
+            if (ViewData["GridException"] != null)
+            {
+
+                gridView.Settings.ShowFooter = true;
+            }
+
+            var renamed = new ReportColumnRenameLogic().GetByReportId(reportId);
+            foreach (var name in renamed)
+            {
+                if (gridView.Columns[name.Column] != null)
+                {
+                    gridView.Columns[name.Column].Caption = name.RenamedTo;
+                }
+            }
+
+        };
+
+
+        ReportSettings.GridViewFeaturesHelper.SetupGlobalReportGrid(settings, Model);
+
+    });
+
+
+    if (ViewData["GridException"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GridException"]);
+    }
+
+}
+@grid.Bind(Model.DataSource).GetHtml()

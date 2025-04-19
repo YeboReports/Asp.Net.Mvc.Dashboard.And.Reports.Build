@@ -1,0 +1,131 @@
+﻿@using CommonDLL.DTO;
+@using CommonDLL.Helper;
+@using System.Drawing;
+@using BusinessLogic.Logic;
+@using Reports.Controllers.Cache
+ 
+@using Reports.Helpers;
+@using CommonDLL.Object;
+
+<div>
+    <form id="SendSearchData">
+
+        @{
+            var cache = new CacheProvider();
+            var reportId = cache.GetObjectByKeyAsInt(CacheVariable.CachedEditedReport);
+            var reportParameter = new ReportParameterLogic().GetById(Model.Id);
+            var storedProcParameter = new StoredProcedureParameterLogic().GetParameterByName(reportId, reportParameter.DatabaseParameterName);
+
+            // var defaultvalue = HelperType.GetValueOrDefaultByType(reportParameter.Default, storedProcParameter.Type);
+
+            if (storedProcParameter.Type == "int")
+            {
+
+                <div>
+                    @Html.DevExpress().Label(settings =>
+               {
+                   settings.Text = reportParameter.DatabaseParameterName;
+                   settings.ClientEnabled = true;
+               }).GetHtml()
+
+                    <h4> Stored Procedure </h4>
+
+                    @Html.Action("ReportParameterStoredProcedureList");
+
+                    <h4>Default Values </h4>
+
+                    @Html.Action("ReportParameterGenericLookupList");
+
+
+                </div>
+
+            }
+            else if (storedProcParameter.Type == "decimal")
+            {
+
+                <div>
+                    @Html.DevExpress().Label(settings =>
+            {
+            settings.Text = reportParameter.DatabaseParameterName;
+            settings.ClientEnabled = true;
+            }).GetHtml()
+
+                    @Html.Action("ReportParameterDecimalLookupList");
+
+                </div>
+
+            }
+            else if (storedProcParameter.Type == "date")
+            {
+
+                <div>
+                    @Html.DevExpress().Label(settings =>
+               {
+                   settings.Text = reportParameter.DatabaseParameterName;
+                   settings.ClientEnabled = true;
+               }).GetHtml()
+
+                    @Html.Action("ReportParameterDatesLookupList");
+
+                </div>
+
+            }
+            else if (storedProcParameter.Type == "datetime")
+            {
+
+                <div>
+                    @Html.DevExpress().Label(settings =>
+               {
+                   settings.Text = reportParameter.DatabaseParameterName;
+                   settings.ClientEnabled = true;
+               }).GetHtml()
+
+                    @Html.Action("ReportParameterDatesLookupList");
+
+                </div>
+
+            }
+            else if (storedProcParameter.Type == "nvarchar")
+            {
+
+                <div class='inline-block'>
+                    @Html.DevExpress().Label(settings =>
+                   {
+                       settings.Text = reportParameter.DatabaseParameterName;
+                       settings.ClientEnabled = true;
+                   }).GetHtml()
+
+
+                    @Html.Action("ReportParameterNVarcharLookupList");
+
+                </div>
+
+            }
+            else if (storedProcParameter.Type == "bit")
+            {
+
+                <div class='inline-block'>
+                    @Html.DevExpress().Label(settings =>
+                    {
+                     settings.Text = reportParameter.DatabaseParameterName;
+                     settings.ClientEnabled = true;
+                    }).GetHtml()
+
+                    @Html.Action("ReportParameterBitLookupList");
+                </div>
+
+            }
+            else
+            {
+                @Html.DevExpress().Label(settings =>
+           {
+               settings.Text = reportParameter.DatabaseParameterName;
+               settings.ClientEnabled = true;
+           }).GetHtml()
+
+            }
+
+        }
+
+    </form>
+</div>

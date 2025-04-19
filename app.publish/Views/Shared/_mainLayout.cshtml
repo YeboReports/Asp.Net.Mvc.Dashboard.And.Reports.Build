@@ -1,0 +1,97 @@
+@{ Layout = "~/Views/Shared/_rootLayout.cshtml"; }
+
+
+
+@Html.DevExpress().Panel(settings =>
+{
+settings.Name = "topPanel";
+settings.FixedPosition = PanelFixedPosition.WindowTop;
+settings.Collapsible = false;
+settings.SettingsAdaptivity.CollapseAtWindowInnerWidth = 580;
+settings.Styles.ExpandedPanel.CssClass = "expandedPanel";
+settings.SetContent(() =>
+{
+    Html.RenderPartial("HeaderPartialView");
+});
+
+}).GetHtml()
+
+@Html.DevExpress().Panel(settings =>
+{
+   settings.Name = "LeftPanel";
+   settings.FixedPosition = PanelFixedPosition.WindowLeft;
+   settings.Collapsible = true;
+   settings.SettingsAdaptivity.CollapseAtWindowInnerWidth = 900;
+   settings.SetContent(() =>
+   {
+       Html.RenderPartial("LeftNavBar");
+   });
+}).GetHtml()
+
+@Html.DevExpress().Panel(settings =>
+{
+     settings.Name = "FooterPanel";
+     settings.FixedPosition = PanelFixedPosition.WindowBottom;
+     settings.Collapsible = false;
+     settings.SettingsAdaptivity.CollapseAtWindowInnerWidth = 900;
+     settings.SetContent(() =>
+    {
+         Html.RenderPartial("FooterPartialView");
+     });
+ }).GetHtml()
+
+@RenderBody()
+
+@Html.DevExpress().CallbackPanel(
+    settings =>
+    {
+        settings.Name = "CallbackPanel";
+        settings.ClientVisible = false;
+        settings.ClientSideEvents.BeginCallback = "function(s, e) { LoadingPanel.Show(); }";
+        settings.ClientSideEvents.EndCallback = "function(s, e) { LoadingPanel.Hide(); }";
+    }
+).GetHtml()
+
+@Html.DevExpress().LoadingPanel(settings =>
+{
+    settings.Name = "LoadingPanel";
+    settings.Modal = true;
+    settings.ContainerElementID = "MainSplitter";
+}).GetHtml()
+
+
+@Html.DevExpress().CallbackPanel(
+    settings =>
+    {
+        settings.Name = "CallbackPanelGeneratingReports";
+        settings.ClientVisible = false;
+        settings.ClientSideEvents.BeginCallback = "function(s, e) { LoadingPanelGeneratingReports.Show(); }";
+        settings.ClientSideEvents.EndCallback = "function(s, e) { LoadingPanelGeneratingReports.Hide(); }";
+    }
+).GetHtml()
+
+@Html.DevExpress().LoadingPanel(settings =>
+{
+    settings.Name = "LoadingPanelGeneratingReports";
+    settings.Text = "Generating Report Data, please wait...";
+    settings.Width = Unit.Pixel(250);
+    settings.Modal = true;
+    settings.ContainerElementID = "MainSplitter";
+}).GetHtml()
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.HeaderText = "Message";
+    settings.Name = "SharedMessageBox";
+    settings.Style.Add("border-color", "Gray");
+    settings.Style.Add("border-width", "2px");
+    settings.AllowDragging = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.Height = Unit.Percentage(100);
+    settings.Width = Unit.Pixel(350);
+    settings.PopupAnimationType = AnimationType.None;
+    settings.Modal = true;
+    settings.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+    settings.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+    settings.SetContent(() => Html.RenderPartial("_SharedMessageBox"));
+}).GetHtml()

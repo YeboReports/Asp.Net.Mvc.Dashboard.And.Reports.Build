@@ -1,0 +1,27 @@
+﻿@model CommonDLL.DTO.SubReportDataCallbackPanelDTO
+@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "SubReportDataPanel";
+    settings.CallbackRouteValues = new
+    {
+        Controller = "SubReportData",
+        Action = "SubReportDataCallbackPanel",
+        ParentId = ViewBag.ParentId,
+        ReportId = ViewBag.ReportId
+    };
+    settings.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+    settings.Height = 650;
+    settings.SetContent(() =>
+    {
+        if (ViewBag.ParentId > 0)
+        {
+           
+            Html.RenderAction("SubReportDataPartial", "SubReportData", new {   ParentId = ViewBag.ParentId, ReportId = ViewBag.ReportId });
+          
+        }
+        else
+        {
+            ViewContext.Writer.Write("<div>Waiting for content to load...</div>");
+        }
+    });
+}).GetHtml()

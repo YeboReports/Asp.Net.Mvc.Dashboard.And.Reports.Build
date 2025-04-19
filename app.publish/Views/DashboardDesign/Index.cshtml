@@ -1,0 +1,117 @@
+﻿@using CommonDLL.DTO
+@using Stimulsoft.Report.Web;
+@using Stimulsoft.Report.Mvc;
+@using CommonDLL.Helper
+
+@{
+
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_mainLayout.cshtml";
+}
+<div class="divTop">
+    Home
+</div>
+<div class="contentHeaderText">
+    @Html.DevExpress().Label(settings =>
+    {
+        settings.Name = "lblHomePageHeading";
+        settings.Text = "Dashboard";
+        settings.ClientVisible = false;
+    }).GetHtml()
+</div>
+
+
+<div>
+
+    @if (Config.DemoMode)
+    {
+
+        @Html.Stimulsoft().StiMvcDesigner(new StiMvcDesignerOptions()
+{
+ FileMenu =
+{
+  ShowExit = true,
+  ShowOpen = false,
+  ShowFileMenuNewReport = false,
+  ShowFileMenuNewDashboard = false,
+  ShowSaveAs = false
+},
+
+ Dictionary =
+
+{
+
+PermissionDataConnections = StiDesignerPermissions.View,
+
+},
+
+ Appearance =
+
+{
+
+ShowOpenDialog =false
+
+},
+ Actions =
+     {
+             GetReport = "GetReport",
+             PreviewReport = "PreviewReport",
+             SaveReport = "SaveReport",
+             DesignerEvent = "DesignerEvent"
+     }
+}); ;
+
+    }
+    else
+    {
+        @Html.Stimulsoft().StiMvcDesigner(new StiMvcDesignerOptions()
+{
+FileMenu =
+{
+ShowExit = true,
+ShowOpen = false,
+ShowFileMenuNewReport = false,
+ShowFileMenuNewDashboard = false,
+ShowSaveAs = false
+},
+
+
+
+Appearance =
+
+{
+
+ShowOpenDialog =false
+
+},
+Actions =
+  {
+          GetReport = "GetReport",
+          PreviewReport = "PreviewReport",
+          SaveReport = "SaveReport",
+          DesignerEvent = "DesignerEvent"
+  }
+}); ;
+
+    }
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

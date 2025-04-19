@@ -1,0 +1,20 @@
+﻿@using CommonDLL.DTO;
+@using CommonDLL.Helper;
+@using System.Drawing;
+@using BusinessLogic.Logic;
+@using Reports.Controllers.Cache
+@model  DataHeaderParameterDTO
+@using Reports.Helpers;
+
+@Html.DevExpress().ComboBox(settings =>
+{
+    settings.Name = Model.Name;
+    settings.Properties.DropDownStyle = DropDownStyle.DropDownList;
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+    settings.Properties.AllowUserInput = true;
+    settings.Properties.AllowMouseWheel = true;
+    settings.Width = Unit.Percentage(99);
+    settings.Properties.TextField = "Name";
+    settings.Properties.ValueField = "Id";
+    settings.Properties.ValueType = typeof(string);
+}).BindList(Model.ReportParameterDropDownList).Bind(Model.Value).GetHtml()

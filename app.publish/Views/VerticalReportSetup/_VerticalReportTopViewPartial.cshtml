@@ -1,0 +1,131 @@
+﻿<script type="text/javascript">
+
+
+    var currentReportParameterId;
+
+    function ShowReportParameterDetailPopup(_ReportParameterId) {
+        LoadingPanel.Show();
+        currentReportParameterId = _ReportParameterId;
+        ReportParameterCallbackPanel.PerformCallback();
+    }
+
+    function OnReportParameterRowReportBeginCallback(s, e)
+    {
+        e.customArgs["Id"] = currentReportParameterId;
+    }
+
+    function OnReportParameterRowReportBeginCallback(s, e) {
+        e.customArgs["Id"] = currentReportParameterId;
+    }
+
+    function OnReportParameterDateLookupReportBeginCallback(s, e)
+    {
+        e.customArgs["Id"] = currentReportParameterId;
+    }
+
+    function OnReportParameterRowReportEndCallback(s, e) {
+        if (!ReportParameterEditRowPopup.IsVisible() && currentReportParameterId != null) {
+            ReportParameterEditRowPopup.Show();
+            LoadingPanel.Hide();
+
+        }
+
+    }
+  
+
+    function OnComboBoxInit(s, e) {
+        if (s.GetValue() == 0)
+            s.SetValue(null);
+    }
+    function ShowReportRolePopup(_Id)
+    {
+
+         $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheReportEdited", "VerticalReportSetup")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                       VerticalReportRoleEditPopup.Show();
+                       VerticalReportRoleGridView.PerformCallback();
+                }
+            });
+
+    }
+
+ 
+
+    
+
+    function ShowReportSetupPopup(_Id)
+    {
+
+               $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheReportEdited", "VerticalReportSetup")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                       VerticalReportParameterEditPopup.Show();
+                       VerticalReportParameterGridView.PerformCallback();
+                }
+            });
+
+    }
+
+       function ShowReportColumnSetupPopup(_Id)
+    {
+
+               $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheReportEdited", "ReportSetup")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                    ReportSetupColumnToDropDownPopup.Show();
+                    //ReportParameterGridView.PerformCallback();
+                    ReportSetupColumnToDropDownGrid.PerformCallback();
+                }
+            });
+
+    }
+
+    function ShowReportParameterPopup(_Id)
+    {
+
+         $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheReportEdited", "ReportSetup")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                       ReportParameterEditPopup.Show();
+                       ReportParameterGridView.PerformCallback();
+                }
+            });
+
+    }
+
+    function ReloadVerticalReportGrid() {
+        if (VerticalReportGridView) {
+            VerticalReportGridView.PerformCallback();
+        }
+    }
+
+</script>

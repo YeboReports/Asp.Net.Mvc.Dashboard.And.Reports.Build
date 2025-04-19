@@ -1,0 +1,176 @@
+﻿@using System.Drawing
+@using BusinessLogic;
+@using CommonDLL.DTO;
+@using CommonDLL.Helper;
+@using BusinessLogic.Logic;
+
+@using DatabaseDLL.Repository;
+@using Reports.Controllers.Cache
+
+@model SubReportDataDTO
+
+@{
+
+    var userId = Model.UserId;
+    // var dropDownLists = Model.DropDownLists;
+
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+
+        settings.Name = "ReportDataGridView" + ViewBag.GridName;
+
+        settings.CallbackRouteValues = new
+        {
+            Controller = "SubReportData",
+            Action = "SubReportDataPartialGrid",
+            ParentId = ViewBag.ParentId,
+            SubReportId = ViewBag.SubReportId
+        };
+
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "SubReportData", Action = "SubReportDataUpdate", ParentId = ViewBag.ParentId, SubReportId = ViewBag.SubReportId };
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "SubReportData", Action = "SubReportDataAdd", ParentId = ViewBag.ParentId, SubReportId = ViewBag.SubReportId };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "SubReportData", Action = "SubReportDataDelete", ParentId = ViewBag.ParentId, SubReportId = ViewBag.SubReportId };
+        settings.SettingsSearchPanel.Visible = false;;
+
+        settings.SettingsPopup.EditForm.Width = Unit.Pixel(500);
+        settings.Width = Unit.Percentage(100);
+        settings.Height = Unit.Percentage(30);
+        settings.Styles.Header.CssClass = "grid-header";
+        ////settings.Styles.Cell.Font.Size = 11;
+        settings.SettingsPopup.EditForm.SettingsAdaptivity.MaxWidth = Unit.Pixel(450);
+        settings.Styles.CommandColumn.Spacing = new Unit(10);
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.False;
+        settings.Styles.AlternatingRow.BackColor = Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = Color.Azure;
+        settings.CommandColumn.Width = Unit.Percentage(5);
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+
+        if (ViewData["GridException"] != null)
+        {
+            settings.SetFooterRowTemplateContent(c =>
+            {
+                Html.ViewContext.Writer.Write(ViewData["GridException"]);
+            });
+        }
+
+        settings.InitNewRow = (s, e) =>
+        {
+            foreach (var para in Model.AddParameters)
+            {
+                var p = para.Name.TrimStart('@');
+                var defaultValue = para.Default.Trim('\'');
+                if (defaultValue != "null" && defaultValue != "")
+                {
+
+                    e.NewValues[p] = CommonDLL.Helper.DefaultValues.GetValueOrDefaultByType(defaultValue, para.Type);
+
+                }
+            }
+
+        };
+
+        settings.BeforeGetCallbackResult += (s, e) =>
+        {
+            MVCxGridView _grid = (MVCxGridView)s;
+            if (!_grid.IsNewRowEditing && _grid.IsEditing)
+            {
+                if (Model.EditParameters != null)
+                {
+                    foreach (var para in Model.EditParameters)
+                    {
+                        var p = para.Name.TrimStart('@');
+                        if (_grid.DataColumns[p] != null && p.ToLower() != "id")
+                        {
+                            _grid.DataColumns[p].EditFormSettings.Visible = DefaultBoolean.True;
+                        }
+                    }
+                }
+            }
+
+            if (_grid.IsNewRowEditing && _grid.IsEditing)
+            {
+                if (Model.AddParameters != null)
+                {
+                    foreach (var para in Model.AddParameters)
+                    {
+                        var p = para.Name.TrimStart('@');
+                        if (_grid.DataColumns[p] != null)
+                        {
+                            _grid.DataColumns[p].EditFormSettings.Visible = DefaultBoolean.True;
+                        }
+                    }
+                }
+
+            }
+
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)s;
+                gridView.Settings.ShowFooter = true;
+            }
+
+        };
+
+
+
+        settings.PreRender = (sender, e) =>
+        {
+            MVCxGridView gridView = (MVCxGridView)sender;
+            if (ViewData["GridException"] != null)
+            {
+
+                gridView.Settings.ShowFooter = true;
+            }
+
+            var renamed = new SubReportColumnRenameLogic().GetBySubReportId(ViewBag.SubReportId);
+            foreach (var name in renamed)
+            {
+                if (gridView.Columns[name.Column] != null)
+                {
+                    gridView.Columns[name.Column].Caption = name.RenamedTo;
+                }
+            }
+
+        };
+
+        settings.HtmlRowPrepared = (s, e) =>
+        {
+            if (e.RowType != GridViewRowType.Data) return;
+
+            string backGroundColor = e.GetValue("RowColor").ToString();
+            if (backGroundColor != null)
+            {
+                e.Row.BackColor = System.Drawing.Color.FromName(backGroundColor);
+            }
+
+            string color = e.GetValue("Color").ToString();
+            if (color != null)
+            {
+                e.Row.ForeColor = System.Drawing.Color.FromName(color);
+            }
+
+            string borderColor = e.GetValue("BorderColor").ToString();
+            if (borderColor != null)
+            {
+                e.Row.BorderColor = System.Drawing.Color.FromName(borderColor);
+            }
+
+            string font = e.GetValue("Font").ToString();
+            if (font != null && font == "Bold")
+            {
+                e.Row.Font.Bold = true;
+            }
+
+        };
+
+        ReportSettings.GridViewFeaturesHelper.SetupGlobalSubReportGrid(settings, Model);
+    });
+
+
+    if (ViewData["GridException"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GridException"]);
+    }
+}
+@grid.Bind(Model.DataSource).GetHtml()
+

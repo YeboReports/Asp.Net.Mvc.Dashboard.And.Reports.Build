@@ -1,0 +1,24 @@
+﻿@using BusinessLogic.Logic;
+@using Reports.Controllers.Cache;
+@model CommonDLL.DTO.ReportDocumentDataTabDTO
+
+@Html.DevExpress().DocumentViewer(settings =>
+{
+    settings.Name = "ReportDocumentDocViewer";
+    settings.Report = Model != null ? Model.Report : null;
+    settings.CallbackRouteValues = new
+    {
+        Controller = "ReportDocumentData",
+        Action = "ReportDocumentDataDocumentViewPartial",
+        ReportDocumentId = Model != null ? Model.ReportDocumentId : 0,
+        RecordId = Model != null ? Model.RecordId : 0
+    };
+    settings.ExportRouteValues = new
+    {
+        Controller = "ReportDocumentData",
+        Action = "ReportDocumentDataDocumentViewPartialExport",
+        ReportDocumentId = Model != null ? Model.ReportDocumentId : 0,
+        RecordId = Model != null ? Model.RecordId : 0
+    };
+
+}).GetHtml()

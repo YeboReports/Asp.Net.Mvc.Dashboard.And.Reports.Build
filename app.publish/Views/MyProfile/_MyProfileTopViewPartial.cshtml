@@ -1,0 +1,28 @@
+﻿@Html.DevExpress().PageControl(
+    settings =>
+    {
+        settings.Name = "MyProfile";
+        settings.ActiveTabIndex = 0;
+        settings.Width = Unit.Percentage(100);
+        settings.ControlStyle.CssClass = "dxtcFixed";
+        settings.TabPages.Add("My Profile").SetContent(() =>
+        {
+            Html.RenderAction("MyProfileInfoViewPartial");
+        });
+        settings.TabPages.Add("User Roles").SetContent(() =>
+        {
+            Html.RenderAction("MyProfileRoleGridViewList");
+        });
+        settings.TabPages.Add("Change Password").SetContent(() =>
+        {
+            Html.RenderAction("PasswordUpdate");
+        });
+        settings.TabPages.Add("Login Log").SetContent(() =>
+        {
+            Html.RenderAction("LoginLogGridPartialView");
+        });
+        settings.TabPages.Add("Theme and Style").SetContent(() =>
+        {
+            Html.RenderPartial("_MyThemeViewPartial");
+        });
+    }).GetHtml()

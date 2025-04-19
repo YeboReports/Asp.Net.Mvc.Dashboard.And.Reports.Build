@@ -1,0 +1,77 @@
+﻿@using Stimulsoft.Report.Mvc;
+
+@{
+    ViewBag.Title = "Api Layout";
+    Layout = "~/Views/Shared/_ApiLayout.cshtml";
+}
+<a href='@Url.Action("Index", "Home")'> Go Home </a>
+<div style="padding:10px">
+
+    <h2> What information do we collect? </h2>
+    <p>
+        
+      <div>  We do not collect any of your personal information, But we do store cookies on your browser.
+        </div>
+      <div>
+          Why do we stored cookies? Cookies enable us to see if you have logged in into our website or not.
+      </div>
+
+
+</p>
+
+    <h3>   How we share your information?</h3>
+    <p>
+        <div>   We do not share your cookies with third parties </div>
+        <div>   We do not store your cookies on our server. Your cookies remains on your browser.</div>
+    </p>
+
+
+
+
+    <h3>Removing cookies </h3>
+    <p>
+        <div>
+            Every browser provides a way of removing cookies.
+            <br />
+            On chrome:
+            <ul>
+                <li> On the top right click "More Options icon."  </li>
+                <li> Click: Clear browsing data  </li>
+                <li>  Choose between: Last hour or All time  </li>
+                <li> Click: Clear data  </li>
+
+            </ul>
+
+            On FireFox
+            <ul>
+                <li> On the top right click "More Options icon."  </li>
+                <li> Click: Settings  </li>
+                <li> Click: Security and Data  </li>
+                <li> Scroll to the section: Cookies and Site Data </li>
+                <li> Click: Clear Data </li>
+            </ul>
+            In Microsoft Edge
+            <ul>
+                <li> select Settings and more </li>
+                <li> Settings </li>
+                <li> Privacy, search, and services </li>
+                <li> Under Clear browsing data, select Choose what to clear </li>
+
+            </ul>
+
+        </div>
+
+    </p>
+
+
+    <h3> Changes to this Policy </h3>
+    <p>
+        <div>  By using our website it means that you agree to our terms and conditions. </div>
+        <div>  We have a right to change or modify these terms at any time without giving any notice.    </div>
+    </p>
+
+
+
+</div>
+
+<a href='@Url.Action("Index", "Home")'> Go Home </a> 

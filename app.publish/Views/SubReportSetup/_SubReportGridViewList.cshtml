@@ -1,0 +1,423 @@
+﻿@using System.Drawing
+@using System.Web.UI.WebControls
+@using BusinessLogic.Logic;
+@using CommonDLL.DTO
+@{
+
+
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "ReportGridView";
+
+        settings.CallbackRouteValues = new { Controller = "SubReportSetup", Action = "SubReportGridViewPartial" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "SubReportSetup", Action = "SubReportUpdate" };
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "SubReportSetup", Action = "SubReportAdd" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "SubReportSetup", Action = "SubReportDelete" };
+
+        settings.SettingsSearchPanel.Visible = false;
+        //    settings.SettingsSearchPanel.ShowApplyButton = true;
+        // settings.SettingsSearchPanel.ShowClearButton = true;
+        settings.Styles.SearchPanel.CssClass = "search-panel-right";
+
+        settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
+        settings.SettingsPopup.EditForm.HorizontalAlign = PopupHorizontalAlign.WindowCenter;
+        settings.SettingsPopup.EditForm.VerticalAlign = PopupVerticalAlign.WindowCenter;
+        settings.SettingsPopup.EditForm.Modal = true;
+        settings.SettingsPopup.EditForm.Width = System.Web.UI.WebControls.Unit.Pixel(500);
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsText.PopupEditFormCaption = "";
+        settings.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+        settings.SettingsEditing.EditFormColumnCount = 1;
+        settings.Height = System.Web.UI.WebControls.Unit.Percentage(30);
+        settings.Styles.Header.CssClass = "grid-header";
+
+        settings.KeyFieldName = "Id";
+
+        settings.SettingsCommandButton.NewButton.Image.IconID = "actions_add_16x16office2013";
+        settings.SettingsCommandButton.NewButton.RenderMode = GridCommandButtonRenderMode.Image;
+        settings.SettingsCommandButton.EditButton.Image.IconID = "actions_edit_16x16devav";
+        settings.SettingsCommandButton.EditButton.RenderMode = GridCommandButtonRenderMode.Image;
+        settings.SettingsCommandButton.DeleteButton.Image.IconID = "actions_cancel_16x16office2013";
+        settings.SettingsCommandButton.DeleteButton.RenderMode = GridCommandButtonRenderMode.Image;
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.ShowNewButtonInHeader = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.Width = System.Web.UI.WebControls.Unit.Percentage(2);
+
+
+        settings.Settings.ShowFilterRow = true;
+        settings.Settings.ShowGroupPanel = false;
+
+        settings.Styles.CommandColumn.Spacing = new Unit(10);
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+
+
+
+        settings.SettingsPager.Visible = false;
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.SettingsPager.FirstPageButton.Visible = false;
+        settings.SettingsPager.LastPageButton.Visible = false;
+        settings.SettingsPager.PageSizeItemSettings.Visible = false;
+        settings.SettingsPager.PageSizeItemSettings.Items = new[] { "5", "10", "20", "50", "100" };
+        settings.SettingsPager.PageSizeItemSettings.ShowAllItem = true;
+        settings.SettingsPager.PageSize = 100;
+
+        settings.SettingsSearchPanel.Visible = false;;
+
+
+        settings.Styles.CommandColumn.Spacing = new Unit(10);
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+
+        settings.CommandButtonInitialize = (sender, e) =>
+        {
+            var grd = sender as MVCxGridView;
+            if (e.ButtonType == ColumnCommandButtonType.Delete)
+            {
+                var isLocked = grd.GetRowValues(e.VisibleIndex, "IsLocked");
+                if ((bool)isLocked)
+                {
+                    e.Visible = false;
+                }
+            }
+            else if (e.ButtonType == ColumnCommandButtonType.Edit)
+            {
+                var isLocked = grd.GetRowValues(e.VisibleIndex, "IsLocked");
+                if ((bool)isLocked)
+                {
+                    e.Visible = false;
+                }
+
+            }
+        };
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Name";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "Name";
+            column.Visible = true;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(0);
+        });
+
+
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "StoredProcedure";
+            column.Caption = "Stored Procedure";
+            column.ColumnType = MVCxGridViewColumnType.ComboBox;
+            column.Visible = true;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            var comboBoxProperties = column.PropertiesEdit as ComboBoxProperties;
+            comboBoxProperties.DataSource = new StoredProcedureLogic().GetAll();
+            comboBoxProperties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+            comboBoxProperties.TextField = "Name";
+            comboBoxProperties.ValueField = "Name";
+            comboBoxProperties.ValueType = typeof(string);
+            column.SetColVisibleIndex(1);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.Caption = "Rename Columns";
+            column.SetDataItemTemplateContent(c =>
+            {
+                var id = (int)DataBinder.Eval(c.DataItem, "Id");
+                var roles = new SubReportColumnRenameLogic().GetTop3ByReportId(id);
+                var isLocked = (bool)DataBinder.Eval(c.DataItem, "IsLocked");
+
+                Html.DevExpress().Image(reptImage =>
+                {
+                    reptImage.Name = "SubReport_RenamesReportColumnsImage"+ id;
+                    reptImage.ImageUrl = "~/Content/Images/Buttons/Add.png";
+                    reptImage.Properties.ClientSideEvents.Click = "function(){ ShowSubReportRenameColumnSetupPopup('" + id + "'); }";
+                    reptImage.ClientEnabled = !isLocked;
+                    reptImage.ClientVisible = !isLocked;
+                }).GetHtml();
+
+                ViewContext.Writer.Write("<table>");
+                foreach (var role in roles)
+                {
+
+                    ViewContext.Writer.Write("<tr><td>" + role.RenamedTo + "</td></tr>");
+
+                }
+
+                ViewContext.Writer.Write("</table>");
+
+
+            });
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(3);
+        });
+
+
+        settings.Columns.Add(column =>
+        {
+            column.Caption = "Drop Downs";
+            column.SetDataItemTemplateContent(c =>
+            {
+                var id = (int)DataBinder.Eval(c.DataItem, "Id");
+
+                var dropDowns = new SubReportDropDownColumnLogic().GetBySubReportId(id);
+                var isLocked = (bool)DataBinder.Eval(c.DataItem, "IsLocked");
+
+                Html.DevExpress().Image(reptImage =>
+                {
+                    reptImage.Name = "SubReport_image3_"+ id;
+                    reptImage.ImageUrl = "~/Content/Images/Buttons/Add.png";
+                    reptImage.Properties.ClientSideEvents.Click = "function(){ ShowSubReportColumnSetupPopup('" + id + "'); }";
+                    reptImage.ClientEnabled = !isLocked;
+                    reptImage.ClientVisible = !isLocked;
+
+                }).GetHtml();
+
+                ViewContext.Writer.Write("<table>");
+
+                foreach (var drp in dropDowns)
+                {
+
+                    ViewContext.Writer.Write("<tr><td></td><td>");
+                    ViewContext.Writer.Write(drp.Column);
+                    ViewContext.Writer.Write("</td></tr>");
+
+                }
+
+                ViewContext.Writer.Write("</table>");
+
+            });
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(3);
+        });
+
+        //settings.Columns.Add(column =>
+        //{
+        //    column.FieldName = "AddStoredProcedure";
+        //    column.Caption = "Add Stored Procedure";
+        //    column.ColumnType = MVCxGridViewColumnType.ComboBox;
+        //    column.Visible = true;
+        //    column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        //    column.EditFormSettings.Visible = DefaultBoolean.True;
+        //    var comboBoxProperties = column.PropertiesEdit as ComboBoxProperties;
+        //    (column.PropertiesEdit as ComboBoxProperties).ClearButton.DisplayMode = ClearButtonDisplayMode.Always;
+        //    comboBoxProperties.DataSource = new StoredProcedureLogic().GetAll();
+        //    comboBoxProperties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+        //    comboBoxProperties.TextField = "Name";
+        //    comboBoxProperties.ValueField = "Name";
+        //    comboBoxProperties.ValueType = typeof(string);
+        //    column.SetColVisibleIndex(1);
+        //});
+
+
+        //settings.Columns.Add(column =>
+        //{
+        //    column.FieldName = "EditStoredProcedure";
+        //    column.Caption = "Edit Stored Procedure";
+        //    column.ColumnType = MVCxGridViewColumnType.ComboBox;
+        //    column.Visible = true;
+        //    column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        //    column.EditFormSettings.Visible = DefaultBoolean.True;
+        //    var comboBoxProperties = column.PropertiesEdit as ComboBoxProperties;
+        //    (column.PropertiesEdit as ComboBoxProperties).ClearButton.DisplayMode = ClearButtonDisplayMode.Always;
+        //    comboBoxProperties.DataSource = new StoredProcedureLogic().GetAll();
+        //    comboBoxProperties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+        //    comboBoxProperties.TextField = "Name";
+        //    comboBoxProperties.ValueField = "Name";
+        //    comboBoxProperties.ValueType = typeof(string);
+        //    column.SetColVisibleIndex(1);
+        //});
+
+        //settings.Columns.Add(column =>
+        //{
+        //    column.FieldName = "DeleteStoredProcedure";
+        //    column.Caption = "Delete Stored Procedure";
+        //    column.ColumnType = MVCxGridViewColumnType.ComboBox;
+        //    column.Visible = true;
+        //    column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        //    column.EditFormSettings.Visible = DefaultBoolean.True;
+        //    var comboBoxProperties = column.PropertiesEdit as ComboBoxProperties;
+        //    (column.PropertiesEdit as ComboBoxProperties).ClearButton.DisplayMode = ClearButtonDisplayMode.Always;
+        //    comboBoxProperties.DataSource = new StoredProcedureLogic().GetAll();
+        //    comboBoxProperties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+        //    comboBoxProperties.TextField = "Name";
+        //    comboBoxProperties.ValueField = "Name";
+        //    comboBoxProperties.ValueType = typeof(string);
+        //    column.SetColVisibleIndex(1);
+        //});
+
+
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "IsDataExportAllowed";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "Is DataExportAllowed?";
+            column.Visible = true;
+            column.ColumnType = MVCxGridViewColumnType.CheckBox;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(3);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "SQLTimeout";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "Report Timeout(seconds)";
+            column.Visible = true;
+            column.ColumnType = MVCxGridViewColumnType.SpinEdit;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(3);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "RowsPerPage";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "RowsPerPage";
+            column.Visible = true;
+            column.ColumnType = MVCxGridViewColumnType.SpinEdit;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(3);
+        });
+
+
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "IsActive";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "IsActive";
+            column.Visible = true;
+            column.ColumnType = MVCxGridViewColumnType.CheckBox;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(3);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "CreatedByDateTime";
+            column.PropertiesEdit.DisplayFormatString = "dd MMM yyyy HH:mm:ss";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "Created ByDateTime";
+            column.Visible = true;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(4);
+            column.PropertiesEdit.DisplayFormatString = "dd MMM yyyy HH:mm:ss";
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "CreatedByUserId";
+            column.Caption = "Created By";
+            column.ColumnType = MVCxGridViewColumnType.ComboBox;
+            column.Visible = true;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+
+            var comboBoxProperties = column.PropertiesEdit as ComboBoxProperties;
+            comboBoxProperties.DataSource = new UserLogic().GetAll();
+            comboBoxProperties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+            comboBoxProperties.TextField = "UserCaption";
+            comboBoxProperties.ValueField = "Id";
+            comboBoxProperties.ValueType = typeof(int);
+
+            column.SetColVisibleIndex(3);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.Caption = "Locked";
+            column.SetDataItemTemplateContent(c =>
+            {
+
+                var isLocked = (bool)DataBinder.Eval(c.DataItem, "IsLocked");
+
+                Html.DevExpress().Image(reptImage =>
+                {
+                    reptImage.Name = "image_supr" + DataBinder.Eval(c.DataItem, "Id");
+                    reptImage.ImageUrl = isLocked ? "~/Content/Images/Grid/Lock.png" : "~/Content/Images/Grid/open_lock.png";
+                }).GetHtml();
+
+            });
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(100);
+        });
+
+        settings.InitNewRow = (s, e) =>
+        {
+            e.NewValues["SQLTimeout"] = "240";
+            e.NewValues["RowsPerPage"] = "25";
+            e.NewValues["IsActive"] = true;
+        };
+
+
+        if (ViewData["GridException"] != null)
+        {
+            settings.SetFooterRowTemplateContent(c =>
+            {
+                Html.ViewContext.Writer.Write(ViewData["GridException"]);
+            });
+        }
+
+        settings.BeforeGetCallbackResult = (s, e) =>
+        {
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)s;
+                gridView.Settings.ShowFooter = true;
+            }
+        };
+
+        settings.PreRender = (sender, e) =>
+        {
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)sender;
+                gridView.Settings.ShowFooter = true;
+            }
+
+        };
+
+        ReportSettings.GridViewFeaturesHelper.GenericSettings(settings);
+
+    });
+
+
+    if (ViewData["GridException"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GridException"]);
+    }
+}
+@grid.Bind(Model).GetHtml()

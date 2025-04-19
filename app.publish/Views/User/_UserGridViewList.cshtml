@@ -1,0 +1,372 @@
+﻿@using System.Drawing
+@using System.Web.UI.WebControls
+@using BusinessLogic.Logic;
+@using CommonDLL.DTO
+@{
+
+
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "UserGridView";
+
+        settings.CallbackRouteValues = new { Controller = "User", Action = "UserGridViewPartial" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "User", Action = "UserUpdate" };
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "User", Action = "UserAdd" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "User", Action = "UserDelete" };
+        settings.ClientSideEvents.EndCallback = "function(){ RefresPasswordGrid(); MenuCallbackPanel.PerformCallback(); } ";
+        settings.SettingsSearchPanel.Visible = false;;
+        //    settings.SettingsSearchPanel.ShowApplyButton = true;
+        // settings.SettingsSearchPanel.ShowClearButton = true;
+        settings.Styles.SearchPanel.CssClass = "search-panel-right";
+
+
+        settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
+        settings.SettingsPopup.EditForm.HorizontalAlign = PopupHorizontalAlign.WindowCenter;
+        settings.SettingsPopup.EditForm.VerticalAlign = PopupVerticalAlign.WindowCenter;
+        settings.SettingsPopup.EditForm.Modal = true;
+        settings.SettingsPopup.EditForm.Width = System.Web.UI.WebControls.Unit.Pixel(500);
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsText.PopupEditFormCaption = "";
+        settings.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+        settings.SettingsEditing.EditFormColumnCount = 1;
+        settings.Height = System.Web.UI.WebControls.Unit.Percentage(30);
+        settings.Styles.Header.CssClass = "grid-header";
+
+        // settings.SettingsAdaptivity.AdaptivityMode = GridViewAdaptivityMode.HideDataCells;
+        // settings.SettingsAdaptivity.AdaptiveColumnPosition = GridViewAdaptiveColumnPosition.Right;
+        // settings.SettingsAdaptivity.AdaptiveDetailColumnCount = 1;
+        // settings.SettingsAdaptivity.AllowOnlyOneAdaptiveDetailExpanded = false;
+        // settings.SettingsAdaptivity.HideDataCellsAtWindowInnerWidth = 0;
+
+        //settings.SettingsPopup.EditForm.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.OnWindowInnerWidth;
+        //settings.SettingsPopup.EditForm.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+        //settings.SettingsPopup.EditForm.SettingsAdaptivity.MaxWidth = System.Web.UI.WebControls.Unit.Pixel(450);
+
+        settings.KeyFieldName = "Id";
+
+        settings.SettingsCommandButton.NewButton.Image.IconID = "actions_add_16x16office2013";
+        settings.SettingsCommandButton.NewButton.RenderMode = GridCommandButtonRenderMode.Image;
+        settings.SettingsCommandButton.EditButton.Image.IconID = "actions_edit_16x16devav";
+        settings.SettingsCommandButton.EditButton.RenderMode = GridCommandButtonRenderMode.Image;
+        settings.SettingsCommandButton.DeleteButton.Image.IconID = "actions_cancel_16x16office2013";
+        settings.SettingsCommandButton.DeleteButton.RenderMode = GridCommandButtonRenderMode.Image;
+        //settings.SettingsCommandButton.UpdateButton.ButtonType = GridCommandButtonRenderMode.Button;
+        //settings.SettingsCommandButton.CancelButton.ButtonType = GridCommandButtonRenderMode.Button;
+        //settings.SettingsCommandButton.EditButton.Image.Url = "~/Content/Images/Buttons/Edit.png";
+        //settings.SettingsCommandButton.NewButton.Image.Url = "~/Content/Images/Buttons/Add.png";
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.ShowNewButtonInHeader = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.Width = System.Web.UI.WebControls.Unit.Percentage(2);
+
+
+        settings.Settings.ShowFilterRow = true;
+        settings.Settings.ShowGroupPanel = false;
+
+        settings.Styles.CommandColumn.Spacing = new Unit(10);
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+
+
+        settings.KeyFieldName = "Id";
+
+        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.SettingsPager.FirstPageButton.Visible = true;
+        settings.SettingsPager.LastPageButton.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Items = new[] { "5", "10", "15", "20", "50", "100", "200", "500" };
+        settings.SettingsPager.PageSizeItemSettings.ShowAllItem = true;
+        settings.SettingsPager.PageSize = 15;
+
+
+        settings.Styles.CommandColumn.Spacing = new Unit(10);
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+
+        settings.CommandButtonInitialize = (sender, e) =>
+        {
+            var grd = sender as MVCxGridView;
+            if (e.ButtonType == ColumnCommandButtonType.Delete)
+            {
+                var isLocked = grd.GetRowValues(e.VisibleIndex, "IsLocked");
+                if ((bool)isLocked)
+                {
+                    e.Visible = false;
+                }
+            }
+            else if (e.ButtonType == ColumnCommandButtonType.Edit)
+            {
+                var isLocked = grd.GetRowValues(e.VisibleIndex, "IsLocked");
+                if ((bool)isLocked)
+                {
+                    e.Visible = false;
+                }
+
+            }
+        };
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "FirstName";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "FirstName";
+            column.Visible = true;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(0);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "LastName";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "LastName";
+            column.Visible = true;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(1);
+        });
+
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "UserCaption";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "UserCaption";
+            column.Visible = true;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(2);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.Caption = "Roles";
+            column.SetDataItemTemplateContent(c =>
+            {
+                var id = (int)DataBinder.Eval(c.DataItem, "Id");
+                var roles = new RoleLogic().GetByUserId(id);
+                var isLocked = (bool)DataBinder.Eval(c.DataItem, "IsLocked");
+                var IsDemo = CommonDLL.Helper.Config.DemoMode;
+
+                Html.DevExpress().Image(reptImage =>
+                {
+                    reptImage.Name = "UserRolesPopupimage_" + id;
+                    reptImage.ImageUrl = "~/Content/Images/Buttons/Add.png";
+                    reptImage.Properties.ClientSideEvents.Click = "function(){ ShowUserRolePopup('" + id + "'); }";
+                    reptImage.ClientEnabled = !isLocked;
+                    reptImage.ClientVisible = !isLocked;
+                    if (IsDemo)
+                    {
+                        reptImage.ClientEnabled = true;
+                        reptImage.ClientVisible = true;
+                    }
+
+                }).GetHtml();
+
+                ViewContext.Writer.Write("<table>");
+                foreach (var role in roles)
+                {
+
+                    ViewContext.Writer.Write("<tr><td>" + role.Name + "</td></tr>");
+
+                }
+
+                ViewContext.Writer.Write("</table>");
+
+                if (roles.Count == 0)
+                {
+                    ViewContext.Writer.Write("<div style=\"font-size:small;background-color:#eed202;padding:3px\"> No Roles</div>");
+                }
+
+            });
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(4);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Email";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "Email";
+            column.Visible = true;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(3);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "CreatedByUserId";
+            column.Caption = "CreatedBy";
+            column.ColumnType = MVCxGridViewColumnType.ComboBox;
+            column.Visible = true;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+
+            var comboBoxProperties = column.PropertiesEdit as ComboBoxProperties;
+            comboBoxProperties.DataSource = new UserLogic().GetAll();
+            comboBoxProperties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+            comboBoxProperties.TextField = "UserCaption";
+            comboBoxProperties.ValueField = "Id";
+            comboBoxProperties.ValueType = typeof(int);
+            column.SetColVisibleIndex(99);
+        });
+
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "CreatedByDateTime";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.PropertiesEdit.DisplayFormatString = "dd MMM yyyy HH:mm:ss";
+            column.Caption = "CreatedByDateTime";
+            column.Visible = true;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(98);
+            column.PropertiesEdit.DisplayFormatString = "dd MMM yyyy HH:mm:ss";
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "ExpireDate";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.PropertiesEdit.DisplayFormatString = "dd MMM yyyy HH:mm:ss";
+            column.Caption = "ExpireDate";
+            column.Visible = true;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(9);
+            column.PropertiesEdit.DisplayFormatString = "dd MMM yyyy HH:mm:ss";
+        });
+
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "IsAdmin";
+            column.HeaderStyle.ForeColor = Color.Black;
+            column.Caption = "IsAdmin";
+            column.Visible = true;
+            column.ColumnType = MVCxGridViewColumnType.CheckBox;
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.True;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(9);
+        });
+
+        settings.HtmlRowPrepared = (s, e) =>
+        {
+            if (Convert.ToBoolean(e.GetValue("IsUserExpired")) == true)
+            {
+                e.Row.ForeColor = System.Drawing.Color.DarkGray;
+            }
+        };
+
+        settings.FormatConditions.AddHighlight("ExpireDate", "IsUserExpired", GridConditionHighlightFormat.LightRedFillWithDarkRedText);
+
+        settings.Columns.Add(column =>
+        {
+            column.Caption = "Locked";
+            column.SetDataItemTemplateContent(c =>
+            {
+
+                var isLocked = (bool)DataBinder.Eval(c.DataItem, "IsLocked");
+
+                Html.DevExpress().Image(reptImage =>
+                {
+                    reptImage.Name = "image_ug" + DataBinder.Eval(c.DataItem, "Id");
+                    reptImage.ImageUrl = isLocked ? "~/Content/Images/Grid/Lock.png" : "~/Content/Images/Grid/open_lock.png";
+                }).GetHtml();
+
+            });
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Settings.AllowAutoFilterTextInputTimer = DefaultBoolean.False;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.CellStyle.Wrap = DefaultBoolean.False;
+            column.SetColVisibleIndex(100);
+        });
+
+        if (ViewData["GridException"] != null)
+        {
+            settings.SetFooterRowTemplateContent(c =>
+            {
+                Html.ViewContext.Writer.Write(ViewData["GridException"]);
+            });
+        }
+
+        settings.BeforeGetCallbackResult = (s, e) =>
+        {
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)s;
+                gridView.Settings.ShowFooter = true;
+            }
+        };
+
+        settings.PreRender = (sender, e) =>
+        {
+            if (ViewData["GridException"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)sender;
+                gridView.Settings.ShowFooter = true;
+            }
+
+        };
+
+        ReportSettings.GridViewFeaturesHelper.GenericSettings(settings);
+    });
+
+
+    if (ViewData["GridException"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GridException"]);
+    }
+}
+@grid.Bind(Model).GetHtml()
+<script type="text/javascript">
+
+    function RefresPasswordGrid()
+    {
+        UserPasswordGridView.PerformCallback();
+        UserIPGridView.PerformCallback();
+    }
+
+    function ShowUserRolePopup(_Id)
+    {
+
+         $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheUserEdited", "User")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                    UserRoleAddEditPopup.Show();
+                    UserRoleGridView.PerformCallback();
+                }
+            });
+
+    }
+</script>

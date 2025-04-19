@@ -1,0 +1,47 @@
+﻿@model CommonDLL.DTO.LoginDTO
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.6.4.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <link href="~/Content/site.css" rel="stylesheet" />
+    <link href="~/Content/Login.css" rel="stylesheet" />
+    @Html.DevExpress().GetStyleSheets(
+       new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+       new StyleSheet { ExtensionSuite = ExtensionSuite.Editors },
+       new StyleSheet { ExtensionSuite = ExtensionSuite.GridView }
+)
+    @Html.DevExpress().GetScripts(
+        new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+        new Script { ExtensionSuite = ExtensionSuite.GridView },
+        new Script { ExtensionSuite = ExtensionSuite.Editors }
+    )
+
+    <title>Login</title>
+</head>
+<body>
+
+   
+    <div class="centre">
+        <div>
+
+            <fieldset>
+
+                <b>Your password needs an update.</b> Click here to <a href="@Url.Action("Index", "MyProfile")"> update password </a>
+
+            </fieldset>
+        </div>
+
+
+    </div>
+
+    <div style="text-align:center">
+        @DateTime.Now.Year Yebo Reports All rights reserved.
+    </div>
+</body>
+</html>

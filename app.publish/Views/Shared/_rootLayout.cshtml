@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="~/Scripts/jquery-3.7.1.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <link rel="icon" type="image/jpg" href="~/Content/Images/Favicon.jpg" />
+    <link href="~/Content/site.css?id=1" rel="stylesheet" />
+    <script src="~/Content/Scripts/site.Js"></script>
+    <link href="~/Content/Lato-Font.css" rel="stylesheet" />
+
+    @{
+        HttpCookie aCookie = Request.Cookies["ReportSiteScale"];
+        if (aCookie != null)
+        {
+            var userSettings = aCookie.Value.ToString();
+
+            <style>
+                    body {
+                        -moz-transform: scale(0.8, 0.8);
+                        zoom: @userSettings;
+                    }
+            </style>
+        }
+
+    }
+
+    @Html.DevExpress().GetStyleSheets(
+        new StyleSheet { ExtensionSuite = ExtensionSuite.VerticalGrid },
+         new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+          new StyleSheet { ExtensionSuite = ExtensionSuite.Icons },
+           new StyleSheet { ExtensionSuite = ExtensionSuite.GridView },
+            new StyleSheet { ExtensionSuite = ExtensionSuite.Bootstrap },
+              new StyleSheet { ExtensionSuite = ExtensionSuite.Editors }
+
+
+     )
+
+    @Html.DevExpress().GetScripts(
+        new Script { ExtensionSuite = ExtensionSuite.VerticalGrid },
+         new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+          new Script { ExtensionSuite = ExtensionSuite.Icons },
+           new Script { ExtensionSuite = ExtensionSuite.GridView },
+            new Script { ExtensionSuite = ExtensionSuite.Bootstrap },
+             new Script { ExtensionSuite = ExtensionSuite.Editors }
+    )
+
+</head>
+<body class="body">
+    @RenderBody()
+</body>
+</html>

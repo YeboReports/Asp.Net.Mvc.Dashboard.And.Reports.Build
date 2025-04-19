@@ -1,0 +1,57 @@
+﻿@using CommonDLL.DTO
+@{
+    ViewBag.Title = "ReportData";
+    Layout = "~/Views/Shared/_mainLayout.cshtml";
+}
+
+<div class="divTop">
+    Report Data
+</div>
+<div class="TopDiv">
+    @Html.Action("ReportDataTopViewPartial", "ReportData")
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.Action("ReportDataGridViewPartial", "ReportData")
+}
+
+
+@Html.DevExpress().PopupControl(settings =>
+{
+
+    settings.Name = "ReportDataSubReportPopup";
+    settings.HeaderText = "SubReports";
+    settings.Style.Add("Color", "Gray");
+    settings.Style.Add("border-color", "Gray");
+    settings.Style.Add("border-width", "2px");
+    settings.AllowDragging = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.Height = Unit.Percentage(100);
+    settings.Width = Unit.Pixel(1200);
+    settings.PopupAnimationType = AnimationType.None;
+    settings.Modal = true;
+    settings.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+    settings.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+    settings.SetContent(() => Html.RenderAction("SubReportDataCallbackPanel", "SubReportData", new { ParentId = 0, ReportId = 0 }));
+}).GetHtml()
+
+@Html.DevExpress().PopupControl(settings =>
+{
+
+    settings.Name = "ReportDataReportDocumentPopup";
+    settings.HeaderText = "Document";
+    settings.Style.Add("Color", "Gray");
+    settings.Style.Add("border-color", "Gray");
+    settings.Style.Add("border-width", "2px");
+    settings.AllowDragging = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.Height = Unit.Percentage(100);
+    settings.Width = Unit.Pixel(1200);
+    settings.PopupAnimationType = AnimationType.None;
+    settings.Modal = true;
+    settings.ScrollBars = ScrollBars.Vertical;
+    settings.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+    settings.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+    settings.SetContent(() => Html.RenderAction("ReportDocumentDataCallbackPanel", "ReportDocumentData", new { RecordId = 0, ReportDocumentId = 0 }));
+}).GetHtml()

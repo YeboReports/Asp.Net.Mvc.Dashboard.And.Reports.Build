@@ -1,0 +1,18 @@
+﻿@using CommonDLL.DTO
+@{
+    ViewBag.Title = "User";
+    Layout = "~/Views/Shared/_mainLayout.cshtml";
+}
+<div class="divTop">
+    My Profile
+</div>
+<div class="contentHeaderText">
+    @Html.DevExpress().Label(settings =>
+    {
+        settings.Name = "lblHomePageHeading";
+        settings.Text = "My profile";
+        settings.ClientVisible = false;
+    }).GetHtml()
+</div>
+
+@Html.Action("MyProfileTopViewPartial", "MyProfile") 

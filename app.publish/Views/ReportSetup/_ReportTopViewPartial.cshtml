@@ -1,0 +1,222 @@
+﻿<script type="text/javascript">
+
+
+    var currentReportParameterId;
+
+    function ShowReportParameterDetailPopup(_ReportParameterId) {
+        LoadingPanel.Show();
+        currentReportParameterId = _ReportParameterId;
+        ReportParameterCallbackPanel.PerformCallback();
+    }
+
+    function OnReportParameterRowReportBeginCallback(s, e)
+    {
+        e.customArgs["Id"] = currentReportParameterId;
+    }
+
+    function OnReportParameterRowReportBeginCallback(s, e) {
+        e.customArgs["Id"] = currentReportParameterId;
+    }
+
+    function OnReportParameterDateLookupReportBeginCallback(s, e)
+    {
+        e.customArgs["Id"] = currentReportParameterId;
+    }
+
+    function OnReportParameterRowReportEndCallback(s, e) {
+        if (!ReportParameterEditRowPopup.IsVisible() && currentReportParameterId != null) {
+            ReportParameterEditRowPopup.Show();
+            LoadingPanel.Hide();
+
+        }
+
+    }
+
+
+
+    function ReportParameterStoredProcedureListChanged(s, e)
+    {
+
+                $.ajax({
+                type: "POST",
+                url: '@Url.Action("UpdateParameterStoredProcedure", "ReportSetup")',
+                data:
+                {
+                    Id: currentReportParameterId,
+                    StoredProcudure: s.GetText()
+                },
+                success: function (response)
+                {
+                    if (response.UpdateStoredProcedure)
+                    {
+                        ReportParameterGridView.PerformCallback();
+                       // ReportParameterEditRowPopup.Hide();
+                    }
+                    else
+                    {
+
+                        alert(response.errorMsg);
+                    }
+
+
+                }
+            });
+    }
+
+
+
+    function OnComboBoxInit(s, e) {
+        if (s.GetValue() == 0)
+            s.SetValue(null);
+    }
+
+    function ShowReportRenameColumnsPopup(_Id)
+    {
+
+             $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheReportEdited", "ReportSetup")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                    ReportColumnRenameViewPartialPopup.Show();
+                    ColumnRenameGridViewList.PerformCallback();
+                }
+            });
+
+    }
+
+    function ShowReportRolePopup(_Id)
+    {
+
+         $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheReportEdited", "ReportSetup")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                       ReportRoleEditPopup.Show();
+                       ReportRoleGridView.PerformCallback();
+                }
+            });
+
+    }
+
+    function ShowSubReportPopup(_Id)
+    {
+
+         $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheReportEdited", "ReportSetup")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                    SubReportViewPartialPopup.Show();
+                    SubReportGridView.PerformCallback();
+                }
+            });
+
+    }
+
+
+   function ShowReportDocumentPopup(_Id)
+    {
+
+         $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheReportEdited", "ReportSetup")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                    ReportDocumentViewPartialPopup.Show();
+                    ReportDocumentGridView.PerformCallback();
+                }
+            });
+
+    }
+
+
+    function ShowReportSetupPopup(_Id)
+    {
+
+               $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheReportEdited", "ReportSetup")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                       ReportParameterEditPopup.Show();
+                       ReportParameterGridView.PerformCallback();
+                }
+            });
+
+    }
+
+       function ShowReportColumnSetupPopup(_Id)
+    {
+
+               $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheReportEdited", "ReportSetup")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                    ReportSetupColumnToDropDownPopup.Show();
+                    //ReportParameterGridView.PerformCallback();
+                    ReportSetupColumnToDropDownGrid.PerformCallback();
+                }
+            });
+
+    }
+
+    function ShowReportParameterPopup(_Id)
+    {
+
+         $.ajax({
+                type: "POST",
+                url: '@Url.Action("CacheReportEdited", "ReportSetup")',
+                data:
+                {
+                    Id: _Id
+                },
+                success: function (response)
+                {
+
+                       ReportParameterEditPopup.Show();
+                       ReportParameterGridView.PerformCallback();
+                }
+            });
+
+    }
+
+    function ReloadReportGrid() {
+        if (ReportGridView) {
+            ReportGridView.PerformCallback();
+        }
+    }
+
+</script>
